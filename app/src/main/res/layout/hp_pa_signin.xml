@@ -1,0 +1,98 @@
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools" android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@drawable/splash_gradient_bg"
+    android:orientation="vertical"
+    android:weightSum="100"
+    >
+
+        <RelativeLayout
+            android:id="@+id/signin_imgvw_rl"
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_weight="45">
+
+            <ImageView
+                android:id="@+id/imageView"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_centerInParent="true"
+                android:background="@drawable/pa_logo"
+                />
+
+        </RelativeLayout>
+
+    <RelativeLayout
+        android:id="@+id/signin_edttxt_rl"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="55"
+        >
+
+        <EditText
+            android:id="@+id/signin_prtnrid_edttxt"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="@dimen/signin_edttxt_mrgn_lft"
+            android:layout_marginRight="@dimen/signin_edttxt_mrgn_lft"
+            android:hint="@string/signin_prtnrid_txt"
+            android:padding="@dimen/signin_rl_all_mrgn"
+            android:textSize="@dimen/signin_rl_txtsz"
+            android:background="@drawable/edittxt_bg"
+            />
+
+        <EditText
+            android:id="@+id/signin_password_edttxt"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/signin_prtnrid_edttxt"
+            android:layout_alignLeft="@+id/signin_prtnrid_edttxt"
+            android:layout_alignRight="@+id/signin_prtnrid_edttxt"
+            android:layout_marginTop="@dimen/signin_rl_all_mrgn"
+            android:hint="@string/signin_pswrd_txt"
+            android:padding="@dimen/signin_rl_all_mrgn"
+            android:textSize="@dimen/signin_rl_txtsz"
+            android:background="@drawable/edittxt_bg"
+            />
+
+        <Button
+            android:id="@+id/signin_login_btn"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/signin_password_edttxt"
+            android:layout_alignLeft="@+id/signin_password_edttxt"
+            android:layout_alignRight="@+id/signin_password_edttxt"
+            android:layout_marginTop="@dimen/signin_btn_mrgn"
+            android:text="@string/signin_login_txt"
+            android:padding="@dimen/signin_rl_all_mrgn"
+            android:textSize="@dimen/signin_btn_txtsz"
+            android:textColor="@color/app_white"
+            android:background="@drawable/button_bgrnd"
+            />
+
+        <TextView
+            android:id="@+id/signin_forgetpswrd_txtvw"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/signin_login_btn"
+            android:layout_centerHorizontal="true"
+            android:layout_marginTop="@dimen/signin_rl_all_mrgn"
+            android:text="@string/signin_forgot_txt"
+            android:textSize="@dimen/signin_rl_txtsz"
+            android:textColor="@color/app_white"
+             />
+
+        <TextView
+            android:id="@+id/signin_powered_txtvw"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentBottom="true"
+            android:layout_centerHorizontal="true"
+            android:textColor="@color/app_white"
+            android:text="@string/signin_foter_txt"
+            android:textSize="@dimen/signin_rl_txtsz"
+            android:layout_marginBottom="@dimen/signin_rl_all_mrgn"/>
+
+    </RelativeLayout>
+
+</LinearLayout>

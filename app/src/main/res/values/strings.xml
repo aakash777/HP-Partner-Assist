@@ -1,0 +1,13 @@
+<resources>
+  <string name="app_name">PartnerAssists</string>
+
+  <string name="hello_world">Hello world!</string>
+  <string name="action_settings">Settings</string>
+  --------------------------------------------------------------------------------------------------
+  <string name="signin_prtnrid_txt">Email ID</string>
+  <string name="signin_pswrd_txt">Password</string>
+  <string name="signin_login_txt">LOGIN</string>
+  <string name="signin_forgot_txt">Forgot Password ?</string>
+  <string name="signin_foter_txt">Powered by Bytech</string>
+
+</resources>

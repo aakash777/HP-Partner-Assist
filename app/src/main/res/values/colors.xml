@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+  
+<color name="background">#65828e</color>
+<color name="main_color">#ff9a00</color>
+<color name="secondary_color">#BDBDBD</color>
+<color name="app_white">#FFFFFF</color>
+<color name="signin_reddish_bttn">#FF7C80</color>
+<color name="splash_grdnt_strrtclr">#2FCBC4</color>
+<color name="splash_grdnt_mdlclr">#00C2BE</color>
+<color name="splash_grdnt_endclr">#00A8D9</color>
+
+
+
+</resources>

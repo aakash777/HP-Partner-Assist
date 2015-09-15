@@ -1,0 +1,28 @@
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+android:layout_width="match_parent"
+android:layout_height="match_parent"
+android:background="@drawable/splash_gradient_bg">
+
+ <ImageView
+     android:id="@+id/splash_logo_imgvw"
+     android:layout_width="wrap_content"
+     android:layout_height="wrap_content"
+     android:layout_centerInParent="true"
+     android:background="@drawable/pa_logo"
+      />
+ 
+    <com.github.jlmd.animatedcircleloadingview.AnimatedCircleLoadingView
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/circle_loading_view"
+    android:layout_width="@dimen/progress_bar_width"
+    android:layout_height="@dimen/progress_bar_width"
+    android:layout_marginBottom="@dimen/splash_prgrss_mrgn"
+    android:layout_alignParentBottom="true"
+    android:layout_centerHorizontal="true"
+    app:mainColor="@color/splash_grdnt_strrtclr"
+    app:secondaryColor="@color/splash_grdnt_endclr"
+/>
+
+
+
+</RelativeLayout>
