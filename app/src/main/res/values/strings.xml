@@ -10,4 +10,6 @@
   <string name="signin_forgot_txt">Forgot Password ?</string>
   <string name="signin_foter_txt">Powered by Bytech</string>
 
+  <string name="home_speech_txt">Speak Now !</string>
+
 </resources>

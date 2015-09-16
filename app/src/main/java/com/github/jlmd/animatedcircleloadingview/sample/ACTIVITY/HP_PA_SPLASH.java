@@ -31,7 +31,7 @@ public class HP_PA_SPLASH extends Activity {
     @Override
     protected void onResume() {
         super.onResume();
-        finish();
+        
     }
 
     public void hppa_dcl_layout_t3() {

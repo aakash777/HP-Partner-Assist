@@ -50,6 +50,7 @@
             android:layout_alignRight="@+id/signin_prtnrid_edttxt"
             android:layout_marginTop="@dimen/signin_rl_all_mrgn"
             android:hint="@string/signin_pswrd_txt"
+            android:inputType="textPassword"
             android:padding="@dimen/signin_rl_all_mrgn"
             android:textSize="@dimen/signin_rl_txtsz"
             android:background="@drawable/edittxt_bg"
@@ -90,8 +91,8 @@
             android:layout_centerHorizontal="true"
             android:textColor="@color/app_white"
             android:text="@string/signin_foter_txt"
-            android:textSize="@dimen/signin_rl_txtsz"
-            android:layout_marginBottom="@dimen/signin_rl_all_mrgn"/>
+            android:textSize="@dimen/bytech_footer_txtsz"
+            android:layout_marginBottom="@dimen/bytech_footer_margin"/>
 
     </RelativeLayout>
 

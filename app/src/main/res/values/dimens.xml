@@ -6,6 +6,8 @@
   <!--App Globals-->
   <dimen name="edttxt_border_radius">5dp</dimen>
   <dimen name="progress_bar_width">150dp</dimen>
+  <dimen name="bytech_footer_margin">10dp</dimen>
+  <dimen name="bytech_footer_txtsz">12sp</dimen>
 
   <!-- Splash Page-->
   <dimen name="splash_prgrss_mrgn">20dp</dimen>

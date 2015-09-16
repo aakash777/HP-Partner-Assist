@@ -1,6 +1,59 @@
-<?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:orientation="vertical" android:layout_width="match_parent"
-    android:layout_height="match_parent">
+    xmlns:tools="http://schemas.android.com/tools" android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/app_white"
+    android:orientation="vertical"
+    android:weightSum="100"
+    >
+
+    <RelativeLayout
+        android:id="@+id/home_speech_txt_rl"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="50"
+        android:layout_margin="20dp"
+        android:background="@drawable/home_speech_bg">
+
+        <TextView
+            android:id="@+id/home_speech_txtvw"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerInParent="true"
+            android:text="@string/home_speech_txt"
+            android:textColor="#cccccc"
+            android:textSize="24sp"
+            />
+
+
+    </RelativeLayout>
+
+    <RelativeLayout
+        android:id="@+id/home_speech_btn_rl"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="50"
+        >
+
+        <ImageButton
+            android:id="@+id/home_speech_imgbtn"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerInParent="true"
+            android:src="@drawable/mic"
+            />
+
+        <TextView
+            android:id="@+id/home_powered_txt"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerHorizontal="true"
+            android:layout_alignParentBottom="true"
+            android:text="@string/signin_foter_txt"
+            android:textColor="@color/splash_grdnt_mdlclr"
+            android:textSize="@dimen/bytech_footer_txtsz"
+            android:layout_marginBottom="@dimen/bytech_footer_margin"
+            />
+
+    </RelativeLayout>
 
 </LinearLayout>

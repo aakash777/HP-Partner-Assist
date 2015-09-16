@@ -1,6 +1,7 @@
 package com.github.jlmd.animatedcircleloadingview.sample.ACTIVITY;
 
 import android.app.Activity;
+import android.content.Intent;
 import android.graphics.Typeface;
 import android.os.Bundle;
 import android.view.View;
@@ -44,6 +45,8 @@ public class HP_PA_SIGNIN extends Activity
                 if (hp_pa_validation) {
                     //successfull validation
                     Toast.makeText(getApplicationContext(),"Successfull Registration",Toast.LENGTH_SHORT).show();
+                    Intent splshint = new Intent(HP_PA_SIGNIN.this, HP_PA_HOME.class);
+                    startActivity(splshint);
                 }
 
             }
@@ -51,8 +54,7 @@ public class HP_PA_SIGNIN extends Activity
 
 
     }
-
-    //onclick ends here
+    //oncreate ends here
     public void hppa_dcl_layout() {
         setContentView(R.layout.hp_pa_signin);
 
