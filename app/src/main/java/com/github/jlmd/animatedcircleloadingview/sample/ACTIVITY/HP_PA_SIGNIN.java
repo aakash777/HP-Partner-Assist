@@ -44,7 +44,7 @@ public class HP_PA_SIGNIN extends Activity
 
                 if (hp_pa_validation) {
                     //successfull validation
-                    Toast.makeText(getApplicationContext(),"Successfull Registration",Toast.LENGTH_SHORT).show();
+
                     Intent splshint = new Intent(HP_PA_SIGNIN.this, HP_PA_HOME.class);
                     startActivity(splshint);
                 }

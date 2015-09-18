@@ -6,12 +6,19 @@
     android:weightSum="100"
     >
 
+    <include
+        layout="@layout/hp_pa_toolbar"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="10"></include>
+
     <RelativeLayout
         android:id="@+id/home_speech_txt_rl"
         android:layout_width="match_parent"
         android:layout_height="0dp"
-        android:layout_weight="50"
+        android:layout_weight="45"
         android:layout_margin="20dp"
+
         android:background="@drawable/home_speech_bg">
 
         <TextView
@@ -20,7 +27,7 @@
             android:layout_height="wrap_content"
             android:layout_centerInParent="true"
             android:text="@string/home_speech_txt"
-            android:textColor="#cccccc"
+            android:textColor="@color/home_grey_txtclr"
             android:textSize="24sp"
             />
 
@@ -31,16 +38,25 @@
         android:id="@+id/home_speech_btn_rl"
         android:layout_width="match_parent"
         android:layout_height="0dp"
-        android:layout_weight="50"
+        android:layout_weight="45"
         >
+
+        <ImageButton
+            android:id="@+id/home_speech_outline_imgbtn"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerInParent="true"
+            android:background="@drawable/mic_brdr"
+            />
 
         <ImageButton
             android:id="@+id/home_speech_imgbtn"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_centerInParent="true"
-            android:src="@drawable/mic"
+            android:background="@drawable/speak_pic"
             />
+
 
         <TextView
             android:id="@+id/home_powered_txt"

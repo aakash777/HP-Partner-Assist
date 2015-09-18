@@ -37,6 +37,7 @@
             android:layout_marginRight="@dimen/signin_edttxt_mrgn_lft"
             android:hint="@string/signin_prtnrid_txt"
             android:padding="@dimen/signin_rl_all_mrgn"
+            android:singleLine="true"
             android:textSize="@dimen/signin_rl_txtsz"
             android:background="@drawable/edittxt_bg"
             />
@@ -53,6 +54,7 @@
             android:inputType="textPassword"
             android:padding="@dimen/signin_rl_all_mrgn"
             android:textSize="@dimen/signin_rl_txtsz"
+            android:singleLine="true"
             android:background="@drawable/edittxt_bg"
             />
 

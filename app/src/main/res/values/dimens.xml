@@ -8,6 +8,8 @@
   <dimen name="progress_bar_width">150dp</dimen>
   <dimen name="bytech_footer_margin">10dp</dimen>
   <dimen name="bytech_footer_txtsz">12sp</dimen>
+  <dimen name="app_toolbar_padding_right">10dp</dimen>
+  <dimen name="app_toolbar_padding_left">5dp</dimen>
 
   <!-- Splash Page-->
   <dimen name="splash_prgrss_mrgn">20dp</dimen>

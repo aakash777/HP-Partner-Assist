@@ -71,7 +71,7 @@ public class HP_PA_SPLASH extends Activity {
                     }
                     Intent splshint = new Intent(HP_PA_SPLASH.this, HP_PA_SIGNIN.class);
                     startActivity(splshint);
-
+                    finish();
                 }
 
             }
