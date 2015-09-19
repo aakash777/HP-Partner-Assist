@@ -17,8 +17,8 @@
         android:layout_width="match_parent"
         android:layout_height="0dp"
         android:layout_weight="45"
+        android:padding="10dp"
         android:layout_margin="20dp"
-
         android:background="@drawable/home_speech_bg">
 
         <TextView
@@ -31,6 +31,16 @@
             android:textSize="24sp"
             />
 
+        <com.github.jlmd.animatedcircleloadingview.AnimatedCircleLoadingView
+            xmlns:app="http://schemas.android.com/apk/res-auto"
+            android:id="@+id/circle_loading_view_home"
+            android:layout_width="@dimen/progress_bar_width"
+            android:layout_height="@dimen/progress_bar_width"
+            android:layout_alignParentBottom="true"
+            android:layout_centerHorizontal="true"
+            app:mainColor="@color/splash_grdnt_strrtclr"
+            app:secondaryColor="@color/splash_grdnt_endclr"
+            />
 
     </RelativeLayout>
 

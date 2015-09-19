@@ -1,25 +1,33 @@
 package com.github.jlmd.animatedcircleloadingview.sample.ACTIVITY;
 
+import android.animation.ObjectAnimator;
 import android.app.Activity;
-import android.content.ActivityNotFoundException;
 import android.content.Intent;
 import android.graphics.Typeface;
+import android.media.audiofx.AudioEffect;
+import android.media.audiofx.Equalizer;
+import android.media.audiofx.Visualizer;
 import android.os.Bundle;
 import android.speech.RecognitionListener;
 import android.speech.RecognizerIntent;
 import android.speech.SpeechRecognizer;
 import android.util.Log;
+import android.view.Gravity;
 import android.view.View;
+import android.view.ViewGroup;
 import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
+import android.view.animation.DecelerateInterpolator;
 import android.widget.ImageButton;
+import android.widget.LinearLayout;
+import android.widget.SeekBar;
 import android.widget.TextView;
-import android.widget.Toast;
+import android.widget.VideoView;
 
 import com.app.jlmd.animatedcircleloadingview.sample.R;
+import com.github.jlmd.animatedcircleloadingview.AnimatedCircleLoadingView;
 
 import java.util.ArrayList;
-import java.util.Locale;
 
 /**
  * Created by Mainak Karmakar on 15/09/2015.
@@ -33,6 +41,8 @@ public class HP_PA_HOME extends Activity implements RecognitionListener
     private SpeechRecognizer speech = null;
     private Intent recognizerIntent;
     private String LOG_TAG = "HP_PA_HOME";
+    private AnimatedCircleLoadingView animatedCircleLoadingView;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -59,16 +69,15 @@ public class HP_PA_HOME extends Activity implements RecognitionListener
                 RecognizerIntent.LANGUAGE_MODEL_WEB_SEARCH);
         recognizerIntent.putExtra(RecognizerIntent.EXTRA_MAX_RESULTS, 3);
 
-
-
-
         home_speech_imgbtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
 
 
-                        view.startAnimation(animScale);
+                view.startAnimation(animScale);
                 speech.startListening(recognizerIntent);
+
+
 
             }
         });
@@ -78,6 +87,8 @@ public class HP_PA_HOME extends Activity implements RecognitionListener
 
     public void hppa_dcl_layout() {
         setContentView(R.layout.hp_pa_home);
+        animatedCircleLoadingView = (AnimatedCircleLoadingView)
+                findViewById(R.id.circle_loading_view_home);
 
     }
     public void hppa_dcl_layout_variables() {
@@ -105,8 +116,10 @@ public class HP_PA_HOME extends Activity implements RecognitionListener
     @Override
     protected void onPause() {
         super.onPause();
+
         if (speech != null) {
             speech.destroy();
+
             Log.i(LOG_TAG, "destroy");
         }
 
@@ -212,5 +225,8 @@ public class HP_PA_HOME extends Activity implements RecognitionListener
         }
         return message;
     }
+
+
+
 
 }
