@@ -11,6 +11,7 @@ import android.os.Bundle;
 import android.speech.RecognitionListener;
 import android.speech.RecognizerIntent;
 import android.speech.SpeechRecognizer;
+import android.speech.tts.TextToSpeech;
 import android.util.Log;
 import android.view.Gravity;
 import android.view.View;
@@ -22,17 +23,19 @@ import android.widget.ImageButton;
 import android.widget.LinearLayout;
 import android.widget.SeekBar;
 import android.widget.TextView;
+import android.widget.Toast;
 import android.widget.VideoView;
 
 import com.app.jlmd.animatedcircleloadingview.sample.R;
 import com.github.jlmd.animatedcircleloadingview.AnimatedCircleLoadingView;
 
 import java.util.ArrayList;
+import java.util.Locale;
 
 /**
  * Created by Mainak Karmakar on 15/09/2015.
  */
-public class HP_PA_HOME extends Activity implements RecognitionListener
+public class HP_PA_HOME extends Activity implements RecognitionListener ,TextToSpeech.OnInitListener
 {
 
     ImageButton home_speech_imgbtn;
@@ -42,12 +45,14 @@ public class HP_PA_HOME extends Activity implements RecognitionListener
     private Intent recognizerIntent;
     private String LOG_TAG = "HP_PA_HOME";
     private AnimatedCircleLoadingView animatedCircleLoadingView;
-
+    private TextToSpeech tts;
+    String globaltext;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
+        tts = new TextToSpeech(this, this);
         //layout declaration
         hppa_dcl_layout();
         //setting the animation
@@ -69,16 +74,15 @@ public class HP_PA_HOME extends Activity implements RecognitionListener
                 RecognizerIntent.LANGUAGE_MODEL_WEB_SEARCH);
         recognizerIntent.putExtra(RecognizerIntent.EXTRA_MAX_RESULTS, 3);
 
+        globaltext = "Welcome to Bytech India H.P Partner Assists";
+        speakOut(globaltext);
+
         home_speech_imgbtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
 
-
                 view.startAnimation(animScale);
                 speech.startListening(recognizerIntent);
-
-
-
             }
         });
 
@@ -128,8 +132,8 @@ public class HP_PA_HOME extends Activity implements RecognitionListener
     @Override
     public void onBeginningOfSpeech() {
         Log.i(LOG_TAG, "onBeginningOfSpeech");
-    //    progressBar.setIndeterminate(false);
-    //    progressBar.setMax(10);
+        //    progressBar.setIndeterminate(false);
+        //    progressBar.setMax(10);
     }
 
     @Override
@@ -140,8 +144,8 @@ public class HP_PA_HOME extends Activity implements RecognitionListener
     @Override
     public void onEndOfSpeech() {
         Log.i(LOG_TAG, "onEndOfSpeech");
-      //  progressBar.setIndeterminate(true);
-     //   toggleButton.setChecked(false);
+        //  progressBar.setIndeterminate(true);
+        //   toggleButton.setChecked(false);
     }
 
     @Override
@@ -149,7 +153,7 @@ public class HP_PA_HOME extends Activity implements RecognitionListener
         String errorMessage = getErrorText(errorCode);
         Log.d(LOG_TAG, "FAILED " + errorMessage);
         home_speech_txtvw.setText(errorMessage);
-    //    toggleButton.setChecked(false);
+        //    toggleButton.setChecked(false);
     }
 
     @Override
@@ -186,7 +190,7 @@ public class HP_PA_HOME extends Activity implements RecognitionListener
     @Override
     public void onRmsChanged(float rmsdB) {
         Log.i(LOG_TAG, "onRmsChanged: " + rmsdB);
-     //   progressBar.setProgress((int) rmsdB);
+        //   progressBar.setProgress((int) rmsdB);
     }
 
     public static String getErrorText(int errorCode) {
@@ -227,6 +231,34 @@ public class HP_PA_HOME extends Activity implements RecognitionListener
     }
 
 
+    @Override
+    public void onInit(int status) {
 
+        System.out.println("Enterd init Function");
+        if (status == TextToSpeech.SUCCESS) {
 
+            int result = tts.setLanguage(Locale.ENGLISH);
+
+            // tts.setPitch(5); // set pitch level
+
+            // tts.setSpeechRate(2); // set speech speed rate
+
+            if (result == TextToSpeech.LANG_MISSING_DATA
+                    || result == TextToSpeech.LANG_NOT_SUPPORTED) {
+                Log.e("TTS", "Language is not supported");
+            } else {
+                speakOut("");
+            }
+
+        } else {
+            Log.e("TTS", "Initilization Failed");
+        }
+
+    }
+
+    private void speakOut(String text) {
+        System.out.println("Entered Speakout");
+
+        tts.speak(text, TextToSpeech.QUEUE_FLUSH, null);
+    }
 }
