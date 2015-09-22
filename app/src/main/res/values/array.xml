@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <array name="progress_colors">
+        <item>@color/signin_reddish_bttn</item>
+        <item>@color/signin_reddish_bttn</item>
+        <item>@color/home_grey_txtclr</item>
+        <item>@color/home_grey_txtclr</item>
+    </array>
+</resources>

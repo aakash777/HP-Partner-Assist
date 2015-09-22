@@ -28,6 +28,7 @@ import android.widget.VideoView;
 
 import com.app.jlmd.animatedcircleloadingview.sample.R;
 import com.github.jlmd.animatedcircleloadingview.AnimatedCircleLoadingView;
+import com.jpardogo.android.googleprogressbar.library.GoogleProgressBar;
 
 import java.util.ArrayList;
 import java.util.Locale;
@@ -47,6 +48,9 @@ public class HP_PA_HOME extends Activity implements RecognitionListener ,TextToS
     private AnimatedCircleLoadingView animatedCircleLoadingView;
     private TextToSpeech tts;
     String globaltext;
+    Animation animScale;
+    GoogleProgressBar mProgressBar;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -56,12 +60,13 @@ public class HP_PA_HOME extends Activity implements RecognitionListener ,TextToS
         //layout declaration
         hppa_dcl_layout();
         //setting the animation
-        final Animation animScale = AnimationUtils.loadAnimation(this,
+        animScale = AnimationUtils.loadAnimation(this,
                 R.anim.anim_scale);
         //layout reference
         hppa_dcl_layout_variables();
         //widget fonts
         hppa_set_widget_fonts();
+
         //configure speech recognizer
         speech = SpeechRecognizer.createSpeechRecognizer(this);
         speech.setRecognitionListener(this);
@@ -77,15 +82,6 @@ public class HP_PA_HOME extends Activity implements RecognitionListener ,TextToS
         globaltext = "Welcome to Bytech India H.P Partner Assists";
         speakOut(globaltext);
 
-        home_speech_imgbtn.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-
-                view.startAnimation(animScale);
-                speech.startListening(recognizerIntent);
-            }
-        });
-
 
     }//oncreate ends here
 
@@ -100,6 +96,7 @@ public class HP_PA_HOME extends Activity implements RecognitionListener ,TextToS
         home_speech_imgbtn  = (ImageButton) findViewById(R.id.home_speech_imgbtn);
         home_speech_txtvw = (TextView) findViewById(R.id.home_speech_txtvw);
         home_powered_txt = (TextView) findViewById(R.id.home_powered_txt);
+        mProgressBar = (GoogleProgressBar) findViewById(R.id.google_progress);
 
     }
 
@@ -115,6 +112,20 @@ public class HP_PA_HOME extends Activity implements RecognitionListener ,TextToS
     @Override
     public void onResume() {
         super.onResume();
+
+        home_speech_imgbtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+
+                view.startAnimation(animScale);
+                speech.startListening(recognizerIntent);
+                home_speech_imgbtn.setClickable(false);
+                mProgressBar.setVisibility(View.VISIBLE);
+
+
+            }
+        });
+
     }
 
     @Override
@@ -132,13 +143,14 @@ public class HP_PA_HOME extends Activity implements RecognitionListener ,TextToS
     @Override
     public void onBeginningOfSpeech() {
         Log.i(LOG_TAG, "onBeginningOfSpeech");
-        //    progressBar.setIndeterminate(false);
-        //    progressBar.setMax(10);
+        home_speech_txtvw.setText("Listening . ");
     }
 
     @Override
     public void onBufferReceived(byte[] buffer) {
         Log.i(LOG_TAG, "onBufferReceived: " + buffer);
+        home_speech_txtvw.setText("Listening . .");
+
     }
 
     @Override
@@ -146,6 +158,7 @@ public class HP_PA_HOME extends Activity implements RecognitionListener ,TextToS
         Log.i(LOG_TAG, "onEndOfSpeech");
         //  progressBar.setIndeterminate(true);
         //   toggleButton.setChecked(false);
+        home_speech_txtvw.setText("Listening . . .");
     }
 
     @Override
@@ -154,24 +167,29 @@ public class HP_PA_HOME extends Activity implements RecognitionListener ,TextToS
         Log.d(LOG_TAG, "FAILED " + errorMessage);
         home_speech_txtvw.setText(errorMessage);
         //    toggleButton.setChecked(false);
+        home_speech_imgbtn.setClickable(true);
+        mProgressBar.setVisibility(View.GONE);
+
     }
 
     @Override
     public void onEvent(int arg0, Bundle arg1) {
         Log.i(LOG_TAG, "onEvent");
+        home_speech_txtvw.setText("Listen");
+
     }
 
     @Override
     public void onPartialResults(Bundle arg0) {
         Log.i(LOG_TAG, "onPartialResults");
-
+        Toast.makeText(HP_PA_HOME.this,"result "+ arg0, Toast.LENGTH_SHORT).show();
+        home_speech_txtvw.setText("Listening . . . .");
     }
 
     @Override
     public void onReadyForSpeech(Bundle arg0) {
         Log.i(LOG_TAG, "onReadyForSpeech");
-
-
+        home_speech_txtvw.setText("Listening");
     }
 
     @Override
@@ -182,9 +200,9 @@ public class HP_PA_HOME extends Activity implements RecognitionListener ,TextToS
         String text = "";
         for (String result : matches)
             text += result + "\n";
-//        ArrayList<String> result = data.getStringArrayListExtra(RecognizerIntent.EXTRA_RESULTS);
-//        home_speech_txtvw.setText(result.get(0));
         home_speech_txtvw.setText(matches.get(0));
+        home_speech_imgbtn.setClickable(true);
+        mProgressBar.setVisibility(View.GONE);
     }
 
     @Override
