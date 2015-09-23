@@ -17,9 +17,9 @@
         android:id="@+id/home_speech_txt_rl"
         android:layout_width="match_parent"
         android:layout_height="0dp"
-        android:layout_weight="45"
-        android:padding="10dp"
-        android:layout_margin="20dp"
+        android:layout_weight="40"
+        android:padding="@dimen/home_rl_padding"
+        android:layout_margin="@dimen/home_rl_all_mrgn"
         android:background="@drawable/home_speech_bg">
 
         <TextView
@@ -29,19 +29,9 @@
             android:layout_centerInParent="true"
             android:text="@string/home_speech_txt"
             android:textColor="@color/home_grey_txtclr"
-            android:textSize="24sp"
+            android:textSize="@dimen/home_speech_textsize"
             />
 
-        <com.github.jlmd.animatedcircleloadingview.AnimatedCircleLoadingView
-            xmlns:app="http://schemas.android.com/apk/res-auto"
-            android:id="@+id/circle_loading_view_home"
-            android:layout_width="@dimen/progress_bar_width"
-            android:layout_height="@dimen/progress_bar_width"
-            android:layout_alignParentBottom="true"
-            android:layout_centerHorizontal="true"
-            app:mainColor="@color/splash_grdnt_strrtclr"
-            app:secondaryColor="@color/splash_grdnt_endclr"
-            />
 
     </RelativeLayout>
 
@@ -49,7 +39,7 @@
         android:id="@+id/home_speech_btn_rl"
         android:layout_width="match_parent"
         android:layout_height="0dp"
-        android:layout_weight="45"
+        android:layout_weight="40"
         >
 
         <ImageButton
@@ -70,26 +60,20 @@
 
         <com.jpardogo.android.googleprogressbar.library.GoogleProgressBar
             android:id="@+id/google_progress"
-            android:layout_width="60dp"
-            android:layout_height="60dp"
+            android:layout_width="@dimen/googleprogress_bar_width"
+            android:layout_height="@dimen/googleprogress_bar_width"
             android:layout_centerInParent="true"
             android:visibility="gone"
             gpb:type="chrome_floating_circles"
             gpb:colors="@array/progress_colors"/>
 
 
-        <TextView
-            android:id="@+id/home_powered_txt"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_centerHorizontal="true"
-            android:layout_alignParentBottom="true"
-            android:text="@string/signin_foter_txt"
-            android:textColor="@color/splash_grdnt_mdlclr"
-            android:textSize="@dimen/bytech_footer_txtsz"
-            android:layout_marginBottom="@dimen/bytech_footer_margin"
-            />
-
     </RelativeLayout>
+
+    <include
+        layout="@layout/hp_pa_footer"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="10"></include>
 
 </LinearLayout>

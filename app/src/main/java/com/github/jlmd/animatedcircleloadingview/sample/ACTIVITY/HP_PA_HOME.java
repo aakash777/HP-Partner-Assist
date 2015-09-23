@@ -40,7 +40,7 @@ public class HP_PA_HOME extends Activity implements RecognitionListener ,TextToS
 {
 
     ImageButton home_speech_imgbtn;
-    TextView home_speech_txtvw,home_powered_txt;
+    TextView home_speech_txtvw,home_powered_txt,footer_marque_txt;
     Typeface typeFace;
     private SpeechRecognizer speech = null;
     private Intent recognizerIntent;
@@ -50,18 +50,20 @@ public class HP_PA_HOME extends Activity implements RecognitionListener ,TextToS
     String globaltext;
     Animation animScale;
     GoogleProgressBar mProgressBar;
+    String tempresult;
 
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-
+        globaltext = "Welcome to Bytech India H.P Partner Assists";
         tts = new TextToSpeech(this, this);
+        System.out.println("speech status onstart" + tts.isSpeaking());
         //layout declaration
         hppa_dcl_layout();
         //setting the animation
         animScale = AnimationUtils.loadAnimation(this,
-                R.anim.anim_scale);
+                     R.anim.anim_scale);
         //layout reference
         hppa_dcl_layout_variables();
         //widget fonts
@@ -79,24 +81,24 @@ public class HP_PA_HOME extends Activity implements RecognitionListener ,TextToS
                 RecognizerIntent.LANGUAGE_MODEL_WEB_SEARCH);
         recognizerIntent.putExtra(RecognizerIntent.EXTRA_MAX_RESULTS, 3);
 
-        globaltext = "Welcome to Bytech India H.P Partner Assists";
-        speakOut(globaltext);
+
+      //  speakOut(globaltext);
 
 
     }//oncreate ends here
 
     public void hppa_dcl_layout() {
+
         setContentView(R.layout.hp_pa_home);
-        animatedCircleLoadingView = (AnimatedCircleLoadingView)
-                findViewById(R.id.circle_loading_view_home);
 
     }
     public void hppa_dcl_layout_variables() {
 
         home_speech_imgbtn  = (ImageButton) findViewById(R.id.home_speech_imgbtn);
         home_speech_txtvw = (TextView) findViewById(R.id.home_speech_txtvw);
-        home_powered_txt = (TextView) findViewById(R.id.home_powered_txt);
+        home_powered_txt = (TextView) findViewById(R.id.footer_powered_txt);
         mProgressBar = (GoogleProgressBar) findViewById(R.id.google_progress);
+        footer_marque_txt = (TextView) findViewById(R.id.footer_marque_txt);
 
     }
 
@@ -113,6 +115,8 @@ public class HP_PA_HOME extends Activity implements RecognitionListener ,TextToS
     public void onResume() {
         super.onResume();
 
+        System.out.println("speech status onresume" + tts.isSpeaking());
+
         home_speech_imgbtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -121,7 +125,6 @@ public class HP_PA_HOME extends Activity implements RecognitionListener ,TextToS
                 speech.startListening(recognizerIntent);
                 home_speech_imgbtn.setClickable(false);
                 mProgressBar.setVisibility(View.VISIBLE);
-
 
             }
         });
@@ -166,6 +169,7 @@ public class HP_PA_HOME extends Activity implements RecognitionListener ,TextToS
         String errorMessage = getErrorText(errorCode);
         Log.d(LOG_TAG, "FAILED " + errorMessage);
         home_speech_txtvw.setText(errorMessage);
+        speakOut(errorMessage+" please tab and speak again");
         //    toggleButton.setChecked(false);
         home_speech_imgbtn.setClickable(true);
         mProgressBar.setVisibility(View.GONE);
@@ -200,7 +204,9 @@ public class HP_PA_HOME extends Activity implements RecognitionListener ,TextToS
         String text = "";
         for (String result : matches)
             text += result + "\n";
+        tempresult = matches.get(0);
         home_speech_txtvw.setText(matches.get(0));
+        speakOut("Do you mean " + "\t" + tempresult);
         home_speech_imgbtn.setClickable(true);
         mProgressBar.setVisibility(View.GONE);
     }
@@ -253,30 +259,34 @@ public class HP_PA_HOME extends Activity implements RecognitionListener ,TextToS
     public void onInit(int status) {
 
         System.out.println("Enterd init Function");
+        System.out.println("tts init status out"+status);
         if (status == TextToSpeech.SUCCESS) {
 
-            int result = tts.setLanguage(Locale.ENGLISH);
-
+            int result = tts.setLanguage(Locale.ENGLISH      );
+            System.out.println("tts init status if"+status);
             // tts.setPitch(5); // set pitch level
 
             // tts.setSpeechRate(2); // set speech speed rate
-
+            System.out.println("languge status out"+result);
             if (result == TextToSpeech.LANG_MISSING_DATA
                     || result == TextToSpeech.LANG_NOT_SUPPORTED) {
+                System.out.println("languge status if"+result);
                 Log.e("TTS", "Language is not supported");
             } else {
-                speakOut("");
+                speakOut(globaltext);
+                System.out.println("languge status else" + result);
             }
 
         } else {
             Log.e("TTS", "Initilization Failed");
+            System.out.println("tts init status else" + status);
         }
 
     }
 
     private void speakOut(String text) {
         System.out.println("Entered Speakout");
-
+        System.out.println("Speakout text"+text);
         tts.speak(text, TextToSpeech.QUEUE_FLUSH, null);
     }
 }

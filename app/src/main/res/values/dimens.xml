@@ -6,10 +6,13 @@
   <!--App Globals-->
   <dimen name="edttxt_border_radius">5dp</dimen>
   <dimen name="progress_bar_width">150dp</dimen>
+  <dimen name="googleprogress_bar_width">60dp</dimen>
   <dimen name="bytech_footer_margin">10dp</dimen>
   <dimen name="bytech_footer_txtsz">12sp</dimen>
+  <dimen name="bytech_footer_marque_txtsz">16sp</dimen>
   <dimen name="app_toolbar_padding_right">10dp</dimen>
   <dimen name="app_toolbar_padding_left">5dp</dimen>
+
 
   <!-- Splash Page-->
   <dimen name="splash_prgrss_mrgn">20dp</dimen>
@@ -21,6 +24,11 @@
   <dimen name="signin_rl_txtsz">14sp</dimen>
   <dimen name="signin_btn_txtsz">18sp</dimen>
 
+  <!-- Home Page-->
+  <dimen name="home_rl_all_mrgn">20dp</dimen>
+  <dimen name="home_rl_padding">10dp</dimen>
+  <dimen name="home_footer_marque_margin">5dp</dimen>
+  <dimen name="home_speech_textsize">24sp</dimen>
 
 
 </resources>

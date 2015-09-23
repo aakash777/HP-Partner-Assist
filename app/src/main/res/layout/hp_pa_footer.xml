@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="vertical"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:background="@color/app_white">
+
+    <TextView
+        android:id="@+id/footer_powered_txt"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_centerHorizontal="true"
+        android:layout_alignParentBottom="true"
+        android:text="@string/signin_foter_txt"
+        android:textColor="@color/splash_grdnt_mdlclr"
+        android:textSize="@dimen/bytech_footer_txtsz"
+        android:layout_marginBottom="@dimen/bytech_footer_margin"
+        />
+
+    <TextView
+        android:id="@+id/footer_marque_txt"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:singleLine="true"
+        android:ellipsize="marquee"
+        android:marqueeRepeatLimit ="marquee_forever"
+        android:focusable="true"
+        android:focusableInTouchMode="true"
+        android:scrollHorizontally="true"
+        android:gravity="right"
+        android:layout_above="@+id/footer_powered_txt"
+        android:layout_marginBottom="@dimen/home_footer_marque_margin"
+        android:layout_centerHorizontal="true"
+        android:text="@string/signin_foter_txt"
+        android:textColor="@color/home_grey_txtclr"
+        android:textSize="@dimen/bytech_footer_marque_txtsz"
+        android:textStyle="bold"
+        />
+
+
+</RelativeLayout>
