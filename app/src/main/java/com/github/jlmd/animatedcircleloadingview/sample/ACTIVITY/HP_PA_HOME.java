@@ -36,10 +36,11 @@ import java.util.Locale;
 /**
  * Created by Mainak Karmakar on 15/09/2015.
  */
-public class HP_PA_HOME extends Activity implements RecognitionListener, TextToSpeech.OnInitListener {
+public class HP_PA_HOME extends Activity implements RecognitionListener ,TextToSpeech.OnInitListener
+{
 
     ImageButton home_speech_imgbtn;
-    TextView home_speech_txtvw, home_powered_txt, footer_marque_txt;
+    TextView home_speech_txtvw,home_powered_txt,footer_marque_txt;
     Typeface typeFace;
     private SpeechRecognizer speech = null;
     private Intent recognizerIntent;
@@ -50,6 +51,7 @@ public class HP_PA_HOME extends Activity implements RecognitionListener, TextToS
     Animation animScale;
     GoogleProgressBar mProgressBar;
     String tempresult;
+    String spoken_user_words[];
 
 
     @Override
@@ -62,7 +64,7 @@ public class HP_PA_HOME extends Activity implements RecognitionListener, TextToS
         hppa_dcl_layout();
         //setting the animation
         animScale = AnimationUtils.loadAnimation(this,
-                R.anim.anim_scale);
+                     R.anim.anim_scale);
         //layout reference
         hppa_dcl_layout_variables();
         //widget fonts
@@ -81,7 +83,7 @@ public class HP_PA_HOME extends Activity implements RecognitionListener, TextToS
         recognizerIntent.putExtra(RecognizerIntent.EXTRA_MAX_RESULTS, 3);
 
 
-        //  speakOut(globaltext);
+      //  speakOut(globaltext);
 
 
     }//oncreate ends here
@@ -91,10 +93,9 @@ public class HP_PA_HOME extends Activity implements RecognitionListener, TextToS
         setContentView(R.layout.hp_pa_home);
 
     }
-
     public void hppa_dcl_layout_variables() {
 
-        home_speech_imgbtn = (ImageButton) findViewById(R.id.home_speech_imgbtn);
+        home_speech_imgbtn  = (ImageButton) findViewById(R.id.home_speech_imgbtn);
         home_speech_txtvw = (TextView) findViewById(R.id.home_speech_txtvw);
         home_powered_txt = (TextView) findViewById(R.id.footer_powered_txt);
         mProgressBar = (GoogleProgressBar) findViewById(R.id.google_progress);
@@ -169,7 +170,7 @@ public class HP_PA_HOME extends Activity implements RecognitionListener, TextToS
         String errorMessage = getErrorText(errorCode);
         Log.d(LOG_TAG, "FAILED " + errorMessage);
         home_speech_txtvw.setText(errorMessage);
-        speakOut(errorMessage + " please tab and speak again");
+        speakOut(errorMessage+" please tab and speak again");
         //    toggleButton.setChecked(false);
         home_speech_imgbtn.setClickable(true);
         mProgressBar.setVisibility(View.GONE);
@@ -186,7 +187,7 @@ public class HP_PA_HOME extends Activity implements RecognitionListener, TextToS
     @Override
     public void onPartialResults(Bundle arg0) {
         Log.i(LOG_TAG, "onPartialResults");
-        Toast.makeText(HP_PA_HOME.this, "result " + arg0, Toast.LENGTH_SHORT).show();
+        Toast.makeText(HP_PA_HOME.this,"result "+ arg0, Toast.LENGTH_SHORT).show();
         home_speech_txtvw.setText("Listening . . . .");
     }
 
@@ -206,7 +207,12 @@ public class HP_PA_HOME extends Activity implements RecognitionListener, TextToS
             text += result + "\n";
         tempresult = matches.get(0);
         home_speech_txtvw.setText(matches.get(0));
-        speakOut("Do you mean " + "\t" + tempresult);
+        spoken_user_words = tempresult.trim().split("\\s+");
+        System.out.println("word1 "+spoken_user_words[0]);
+        System.out.println("word2 "+spoken_user_words[1]);
+        System.out.println("word length "+spoken_user_words.length);
+        footer_marque_txt.setText(tempresult);
+        speakOut("Do you mean " + "\t" + tempresult+ "Please say go or proceed to process your question");
         home_speech_imgbtn.setClickable(true);
         mProgressBar.setVisibility(View.GONE);
     }
@@ -259,18 +265,21 @@ public class HP_PA_HOME extends Activity implements RecognitionListener, TextToS
     public void onInit(int status) {
 
         System.out.println("Enterd init Function");
-        System.out.println("tts init status out" + status);
+        System.out.println("tts init status out"+status);
         if (status == TextToSpeech.SUCCESS) {
 
-            int result = tts.setLanguage(Locale.ENGLISH);
+            int result = tts.setLanguage(Locale.UK);
+
+
+            tts.setSpeechRate((float) 1.5);
             System.out.println("tts init status if" + status);
-            // tts.setPitch(5); // set pitch level
+            tts.setPitch((float) -1); // set pitch level
 
             // tts.setSpeechRate(2); // set speech speed rate
-            System.out.println("languge status out" + result);
+            System.out.println("languge status out"+result);
             if (result == TextToSpeech.LANG_MISSING_DATA
                     || result == TextToSpeech.LANG_NOT_SUPPORTED) {
-                System.out.println("languge status if" + result);
+                System.out.println("languge status if"+result);
                 Log.e("TTS", "Language is not supported");
             } else {
                 speakOut(globaltext);
@@ -286,7 +295,7 @@ public class HP_PA_HOME extends Activity implements RecognitionListener, TextToS
 
     private void speakOut(String text) {
         System.out.println("Entered Speakout");
-        System.out.println("Speakout text" + text);
+        System.out.println("Speakout text"+text);
         tts.speak(text, TextToSpeech.QUEUE_FLUSH, null);
     }
 }
