@@ -19,16 +19,6 @@ public class AppConstant {
     public static String shared_partner_state = "shared_partner_area";
 
 
-    public static void savePreferences(Activity activity, String key, String value) {
-        SharedPreferences sp = PreferenceManager.getDefaultSharedPreferences(activity.getApplicationContext());
-        Editor editor = sp.edit();
-        editor.putString(key, value);
-        editor.commit();
-    }
 
-    public static String readPreferences(Activity activity, String key, String defaultValue) {
-        SharedPreferences sp = PreferenceManager.getDefaultSharedPreferences(activity.getApplicationContext());
-        return sp.getString(key, defaultValue);
-    }
 
 }

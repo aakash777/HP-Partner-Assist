@@ -25,7 +25,7 @@ import android.widget.Toast;
 
 import com.app.jlmd.animatedcircleloadingview.sample.R;
 import com.github.jlmd.animatedcircleloadingview.sample.ACTIVITY.APP_CONSTANT.AppConstant;
-//import com.github.jlmd.animatedcircleloadingview.sample.ACTIVITY.MAIN_APPLICATION.ConnectionDetector;
+import com.github.jlmd.animatedcircleloadingview.sample.ACTIVITY.MAIN_APPLICATION.ConnectionDetector;
 import com.github.jlmd.animatedcircleloadingview.sample.ACTIVITY.MODEL.HP_PA_VALIDATION;
 import com.pixplicity.easyprefs.library.Prefs;
 
@@ -42,7 +42,7 @@ public class HP_PA_SIGNIN extends Activity {
     HP_PA_VALIDATION Validation;
     String get_prtnrid_edittxt, get_password_edittxt;
     ProgressDialog PD;
-//    private ConnectionDetector cd;
+    private ConnectionDetector cd;
     private Boolean isInternetPresent = false;
     private String partner_id, partner_name, partner_region, partner_state, validate_authentic_user;
 
@@ -60,7 +60,7 @@ public class HP_PA_SIGNIN extends Activity {
         //widget fonts
         hppa_set_widget_fonts();
         // Make Conncetion Class Object
-//        cd = new ConnectionDetector(getApplicationContext());
+        cd = new ConnectionDetector(getApplicationContext());
         //get edit text value
 
         signin_login_btn.setOnClickListener(new View.OnClickListener() {
@@ -72,7 +72,7 @@ public class HP_PA_SIGNIN extends Activity {
                 if (hp_pa_validation) {
                     //successfull validation
 
-                   // isInternetPresent = cd.isConnectingToInternet();
+                    isInternetPresent = cd.isConnectingToInternet();
 
                     // check for Internet status
                     if (isInternetPresent) {
@@ -195,6 +195,7 @@ public class HP_PA_SIGNIN extends Activity {
 
             if (validate_authentic_user.equalsIgnoreCase("1")) {
 
+
                 Prefs.putString(AppConstant.shared_partner_id, partner_id);
 
                 Prefs.putString(AppConstant.shared_partner_name, partner_name);
@@ -203,16 +204,6 @@ public class HP_PA_SIGNIN extends Activity {
 
                 Prefs.putString(AppConstant.shared_partner_region, partner_region);
 
-//                AppConstant.savePreferences(HP_PA_SIGNIN.this, "PARTNER_ID",
-//                        partner_id);
-//                AppConstant.savePreferences(HP_PA_SIGNIN.this, "PARTNER_NAME",
-//                        partner_name);
-//                AppConstant.savePreferences(HP_PA_SIGNIN.this, "REGION",
-//                        partner_region);
-//                AppConstant.savePreferences(HP_PA_SIGNIN.this, "STATE",
-//                        partner_state);
-//                AppConstant.savePreferences(HP_PA_SIGNIN.this, "msg",
-//                        validate_authentic_user);
 
                 Intent goToHomePage = new Intent(HP_PA_SIGNIN.this, HP_PA_HOME.class);
                 goToHomePage.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
