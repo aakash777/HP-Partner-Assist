@@ -33,7 +33,6 @@ public class BYTECH_SINGLETON extends Application {
         mInstance = this;
         Prefs.initPrefs(this);
 
-
     }
 
 

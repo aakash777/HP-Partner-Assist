@@ -69,7 +69,7 @@ public class HP_PA_HOME extends Activity implements RecognitionListener ,TextToS
         hppa_dcl_layout_variables();
         //widget fonts
         hppa_set_widget_fonts();
-
+        prevalidating_sentence(globaltext);
         //configure speech recognizer
         speech = SpeechRecognizer.createSpeechRecognizer(this);
         speech.setRecognitionListener(this);
@@ -170,8 +170,8 @@ public class HP_PA_HOME extends Activity implements RecognitionListener ,TextToS
         String errorMessage = getErrorText(errorCode);
         Log.d(LOG_TAG, "FAILED " + errorMessage);
         home_speech_txtvw.setText(errorMessage);
-        speakOut(errorMessage+" please tab and speak again");
-        //    toggleButton.setChecked(false);
+        speakOut(errorMessage + " please tab and speak again");
+        //toggleButton.setChecked(false);
         home_speech_imgbtn.setClickable(true);
         mProgressBar.setVisibility(View.GONE);
 
@@ -187,7 +187,7 @@ public class HP_PA_HOME extends Activity implements RecognitionListener ,TextToS
     @Override
     public void onPartialResults(Bundle arg0) {
         Log.i(LOG_TAG, "onPartialResults");
-        Toast.makeText(HP_PA_HOME.this,"result "+ arg0, Toast.LENGTH_SHORT).show();
+        System.out.println();
         home_speech_txtvw.setText("Listening . . . .");
     }
 
@@ -207,10 +207,8 @@ public class HP_PA_HOME extends Activity implements RecognitionListener ,TextToS
             text += result + "\n";
         tempresult = matches.get(0);
         home_speech_txtvw.setText(matches.get(0));
-        spoken_user_words = tempresult.trim().split("\\s+");
-        System.out.println("word1 "+spoken_user_words[0]);
-        System.out.println("word2 "+spoken_user_words[1]);
-        System.out.println("word length "+spoken_user_words.length);
+
+   //     prevalidating_sentence(globaltext);
         footer_marque_txt.setText(tempresult);
         speakOut("Do you mean " + "\t" + tempresult+ "Please say go or proceed to process your question");
         home_speech_imgbtn.setClickable(true);
@@ -297,5 +295,18 @@ public class HP_PA_HOME extends Activity implements RecognitionListener ,TextToS
         System.out.println("Entered Speakout");
         System.out.println("Speakout text"+text);
         tts.speak(text, TextToSpeech.QUEUE_FLUSH, null);
+    }
+
+    private void prevalidating_sentence(String sentence)
+    {
+        spoken_user_words = sentence.trim().split("\\s+");
+        System.out.println("word1 "+spoken_user_words[0]);
+        System.out.println("word2 "+spoken_user_words[1]);
+        System.out.println("word length "+spoken_user_words.length);
+        for(int i =0; i<spoken_user_words.length; i++)
+        {
+
+        }
+
     }
 }

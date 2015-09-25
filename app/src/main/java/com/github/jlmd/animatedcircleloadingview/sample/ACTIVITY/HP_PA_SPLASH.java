@@ -69,7 +69,7 @@ public class HP_PA_SPLASH extends Activity {
                     }catch (InterruptedException e) {
                         e.printStackTrace();
                     }
-                    Intent splshint = new Intent(HP_PA_SPLASH.this, HP_PA_SIGNIN.class);
+                    Intent splshint = new Intent(HP_PA_SPLASH.this, HP_PA_HOME.class);
                     startActivity(splshint);
                     finish();
                 }
@@ -81,7 +81,6 @@ public class HP_PA_SPLASH extends Activity {
         new Thread(runnable).start();
 
     }
-
 
     private void changePercent(final int percent) {
 

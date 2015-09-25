@@ -12,6 +12,13 @@ import android.preference.PreferenceManager;
 
 public class AppConstant {
 
+    public static String shared_partner_id = "shared_partner_id";
+    public static String shared_partner_name = "shared_partner_name";
+    public static String shared_wishing_time = "shared_user_wish";
+    public static String shared_partner_region = "shared_partner_region";
+    public static String shared_partner_state = "shared_partner_area";
+
+
     public static void savePreferences(Activity activity, String key, String value) {
         SharedPreferences sp = PreferenceManager.getDefaultSharedPreferences(activity.getApplicationContext());
         Editor editor = sp.edit();
