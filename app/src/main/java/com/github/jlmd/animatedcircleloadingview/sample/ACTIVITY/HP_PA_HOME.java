@@ -1,42 +1,38 @@
 package com.github.jlmd.animatedcircleloadingview.sample.ACTIVITY;
 
-import android.animation.ObjectAnimator;
+
 import android.app.Activity;
+import android.content.Context;
 import android.content.Intent;
 import android.graphics.Typeface;
-import android.media.audiofx.AudioEffect;
-import android.media.audiofx.Equalizer;
-import android.media.audiofx.Visualizer;
 import android.os.Bundle;
 import android.speech.RecognitionListener;
 import android.speech.RecognizerIntent;
 import android.speech.SpeechRecognizer;
 import android.speech.tts.TextToSpeech;
 import android.util.Log;
-import android.view.Gravity;
 import android.view.View;
-import android.view.ViewGroup;
 import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
-import android.view.animation.DecelerateInterpolator;
+import android.view.textservice.TextInfo;
+import android.view.textservice.TextServicesManager;
 import android.widget.ImageButton;
-import android.widget.LinearLayout;
-import android.widget.SeekBar;
 import android.widget.TextView;
-import android.widget.Toast;
-import android.widget.VideoView;
-
 import com.app.jlmd.animatedcircleloadingview.sample.R;
 import com.github.jlmd.animatedcircleloadingview.AnimatedCircleLoadingView;
 import com.jpardogo.android.googleprogressbar.library.GoogleProgressBar;
-
 import java.util.ArrayList;
 import java.util.Locale;
+import android.view.textservice.SentenceSuggestionsInfo;
+import android.view.textservice.SpellCheckerSession;
+import android.view.textservice.SpellCheckerSession.SpellCheckerSessionListener;
+import android.view.textservice.SuggestionsInfo;
 
 /**
  * Created by Mainak Karmakar on 15/09/2015.
  */
-public class HP_PA_HOME extends Activity implements RecognitionListener ,TextToSpeech.OnInitListener
+public class HP_PA_HOME extends Activity implements RecognitionListener ,
+        TextToSpeech.OnInitListener , SpellCheckerSession.SpellCheckerSessionListener
 {
 
     ImageButton home_speech_imgbtn;
@@ -52,7 +48,10 @@ public class HP_PA_HOME extends Activity implements RecognitionListener ,TextToS
     GoogleProgressBar mProgressBar;
     String tempresult;
     String spoken_user_words[];
-
+    private SpellCheckerSession mScs;
+    ArrayList<String> suggesion;
+    TextServicesManager tsm;
+    SpellCheckerSession session;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -69,7 +68,7 @@ public class HP_PA_HOME extends Activity implements RecognitionListener ,TextToS
         hppa_dcl_layout_variables();
         //widget fonts
         hppa_set_widget_fonts();
-        prevalidating_sentence(globaltext);
+
         //configure speech recognizer
         speech = SpeechRecognizer.createSpeechRecognizer(this);
         speech.setRecognitionListener(this);
@@ -81,12 +80,46 @@ public class HP_PA_HOME extends Activity implements RecognitionListener ,TextToS
         recognizerIntent.putExtra(RecognizerIntent.EXTRA_LANGUAGE_MODEL,
                 RecognizerIntent.LANGUAGE_MODEL_WEB_SEARCH);
         recognizerIntent.putExtra(RecognizerIntent.EXTRA_MAX_RESULTS, 3);
-
-
-      //  speakOut(globaltext);
-
+        suggesion = new ArrayList<String>();
+        fetchSuggestionsFor("liv");
+        prevalidating_sentence(globaltext);
 
     }//oncreate ends here
+
+    @Override
+    public void onGetSuggestions(SuggestionsInfo[] results) {
+        System.out.println("inside on get suggesion");
+    }
+
+    @Override
+    public void onGetSentenceSuggestions(SentenceSuggestionsInfo[] results) {
+
+       // final StringBuffer sb = new StringBuffer("");
+        System.out.println("inside on get Sentence suggesion");
+
+        for(SentenceSuggestionsInfo result:results){
+            int n = result.getSuggestionsCount();
+            for(int i=0; i < n; i++){
+                int m = result.getSuggestionsInfoAt(i).getSuggestionsCount();
+
+                for(int k=0; k < m; k++) {
+//                    sb.append(result.getSuggestionsInfoAt(i).getSuggestionAt(k))
+//                            .append("\n");
+                    suggesion.add(result.getSuggestionsInfoAt(i).getSuggestionAt(k));
+
+                    System.out.println("ongetsuggetions:" + result.getSuggestionsInfoAt(i).getSuggestionAt(k));
+
+                }
+
+            }
+        }
+        System.out.println("sugetion length"+suggesion.size());
+    }
+
+    private void fetchSuggestionsFor(String input){
+
+        System.out.println("inside fetch suggesion");
+    }
 
     public void hppa_dcl_layout() {
 
@@ -136,13 +169,14 @@ public class HP_PA_HOME extends Activity implements RecognitionListener ,TextToS
     protected void onPause() {
         super.onPause();
 
-        if (speech != null) {
+            if (speech != null) {
             speech.destroy();
 
             Log.i(LOG_TAG, "destroy");
         }
 
     }
+
 
     @Override
     public void onBeginningOfSpeech() {
@@ -300,12 +334,24 @@ public class HP_PA_HOME extends Activity implements RecognitionListener ,TextToS
     private void prevalidating_sentence(String sentence)
     {
         spoken_user_words = sentence.trim().split("\\s+");
-        System.out.println("word1 "+spoken_user_words[0]);
-        System.out.println("word2 "+spoken_user_words[1]);
+
         System.out.println("word length "+spoken_user_words.length);
         for(int i =0; i<spoken_user_words.length; i++)
         {
+            System.out.println("word at position "+i+" is "+spoken_user_words[i]);
+            tsm =(TextServicesManager) getSystemService(TEXT_SERVICES_MANAGER_SERVICE);
 
+            session = tsm.newSpellCheckerSession(null, Locale.ENGLISH, this, true);
+            session.getSentenceSuggestions(
+                    new TextInfo[]{new TextInfo(spoken_user_words[i])},
+                    8
+            );
+//            fetchSuggestionsFor("Peter");
+            System.out.println("my length" + suggesion.size());
+//            System.out.println("suggetion 1 "+suggesion.get(0));
+//            System.out.println("suggetion 2 "+suggesion.get(2));
+//            System.out.println("suggetion 3 "+suggesion.get(3));
+//            System.out.println("suggetion 4 "+suggesion.get(4));
         }
 
     }
