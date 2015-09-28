@@ -19,6 +19,4 @@ public class AppConstant {
     public static String shared_partner_state = "shared_partner_area";
 
 
-
-
 }

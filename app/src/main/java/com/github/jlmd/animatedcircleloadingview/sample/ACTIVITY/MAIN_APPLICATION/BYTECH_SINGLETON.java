@@ -71,6 +71,10 @@ public class BYTECH_SINGLETON extends Application {
             mRequestQueue.cancelAll(new RequestQueue.RequestFilter() {
                 @Override
                 public boolean apply(Request<?> request) {
+
+
+
+
                     return true;
                 }
             });
