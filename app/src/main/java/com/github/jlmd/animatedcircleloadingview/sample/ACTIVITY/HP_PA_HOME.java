@@ -23,7 +23,7 @@ import com.github.jlmd.animatedcircleloadingview.AnimatedCircleLoadingView;
 import com.github.jlmd.animatedcircleloadingview.sample.ACTIVITY.APP_CONSTANT.AppConstant;
 import com.jpardogo.android.googleprogressbar.library.GoogleProgressBar;
 import com.pixplicity.easyprefs.library.Prefs;
-
+//import com.acapelagroup.android.tts.acattsandroid;
 import java.util.ArrayList;
 import java.util.Locale;
 import android.view.textservice.SentenceSuggestionsInfo;
@@ -34,8 +34,7 @@ import android.view.textservice.SuggestionsInfo;
 /**
  * Created by Mainak Karmakar on 15/09/2015.
  */
-public class HP_PA_HOME extends Activity implements RecognitionListener ,
-        TextToSpeech.OnInitListener , SpellCheckerSession.SpellCheckerSessionListener
+public class HP_PA_HOME extends Activity implements RecognitionListener , TextToSpeech.OnInitListener
 {
 
     ImageButton home_speech_imgbtn;
@@ -44,21 +43,22 @@ public class HP_PA_HOME extends Activity implements RecognitionListener ,
     private SpeechRecognizer speech = null;
     private Intent recognizerIntent;
     private String LOG_TAG = "HP_PA_HOME";
-    private AnimatedCircleLoadingView animatedCircleLoadingView;
+//    private AnimatedCircleLoadingView animatedCircleLoadingView;
     private TextToSpeech tts;
     String globaltext;
     Animation animScale;
     GoogleProgressBar mProgressBar;
     String tempresult;
     String spoken_user_words[];
-    private SpellCheckerSession scs;
-    private static ArrayList<String> suggesion;
     int entityflag;
     int wh_qstn_flg;
+    int non_english_flag;
+    String pre_validated_text;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        pre_validated_text = "";
         globaltext = Prefs.getString(AppConstant.shared_wishing_time, "")+"\n"+
                 Prefs.getString(AppConstant.shared_partner_name, "")+"\n"+
                 "welcome to bytech india "+"\n"+"please tab and ask your question";
@@ -88,29 +88,7 @@ public class HP_PA_HOME extends Activity implements RecognitionListener ,
                 RecognizerIntent.LANGUAGE_MODEL_WEB_SEARCH);
         recognizerIntent.putExtra(RecognizerIntent.EXTRA_MAX_RESULTS, 3);
 
-
-
-
     }//oncreate ends here
-
-    @Override
-    public void onGetSuggestions(final SuggestionsInfo[] arg0) {
-        suggesion = new ArrayList<String>();
-        for (int i = 0; i < arg0.length; ++i) {
-            final int len = arg0[i].getSuggestionsCount();
-
-            for (int j = 0; j < len; ++j) {
-                suggesion.add(arg0[i].getSuggestionAt(j));
-                System.out.println("suggestions " + arg0[i].getSuggestionAt(j));
-            }
-        }
-        System.out.println("my length" + suggesion.size());
-    }
-
-    @Override
-    public void onGetSentenceSuggestions(SentenceSuggestionsInfo[] arg0) {
-        // TODO Auto-generated method stub
-    }
 
     public void hppa_dcl_layout() {
 
@@ -195,6 +173,7 @@ public class HP_PA_HOME extends Activity implements RecognitionListener ,
         Log.d(LOG_TAG, "FAILED " + errorMessage);
         home_speech_txtvw.setText(errorMessage);
         speakOut(errorMessage + " please tab and speak again");
+        pre_validated_text="";
         //toggleButton.setChecked(false);
         home_speech_imgbtn.setClickable(true);
         mProgressBar.setVisibility(View.GONE);
@@ -290,9 +269,9 @@ public class HP_PA_HOME extends Activity implements RecognitionListener ,
 
             int result = tts.setLanguage(Locale.UK);
 
-            tts.setSpeechRate((float) 1.5);
+            tts.setSpeechRate((float) 1.1);
             System.out.println("tts init status if" + status);
-            tts.setPitch((float) -1); // set pitch level
+            tts.setPitch((float) 1.0); // set pitch level
 
             // tts.setSpeechRate(2); // set speech speed rate
             System.out.println("languge status out"+result);
@@ -320,88 +299,146 @@ public class HP_PA_HOME extends Activity implements RecognitionListener ,
 
     private void prevalidating_sentence(String sentence)
     {
+
         entityflag = 0;
         wh_qstn_flg = 0;
-        spoken_user_words = sentence.trim().split("\\s+");
-      if(spoken_user_words.length<=10)
-      {
-        System.out.println("word length "+spoken_user_words.length);
-        for(int i =0; i<spoken_user_words.length; i++)
-        {
-            System.out.println("word at position " + i + " is " + spoken_user_words[i]);
+     if((sentence.equalsIgnoreCase("proceed"))||(sentence.equalsIgnoreCase("proceed")))
+     {
+         System.out.println("validated text"+pre_validated_text);
+         if(!pre_validated_text.equals(""))
+         {
+             speakOut("please wait!! while we process your question");
+             footer_marque_txt.setText("");
+         }else{
 
-            final TextServicesManager tsm = (TextServicesManager) getSystemService(Context.TEXT_SERVICES_MANAGER_SERVICE);
-            scs = tsm.newSpellCheckerSession(null, null, this, true);
-            scs.getSuggestions(new TextInfo(spoken_user_words[i]), 5);
-            //  fetchSuggestionsFor("Peter");
-            if(spoken_user_words[i].length()>45)
-            {
-                speakOut("Sorry !! We found that your Question has one or more invalid " +
-                        "word!!"+"\n"+"Please tab and Try again");
-                footer_marque_txt.setText("Please tab and speak again");
-                break;
-            }else{
-                if ((spoken_user_words[i].equalsIgnoreCase("Sale"))||
-                        (spoken_user_words[i].equalsIgnoreCase("Sales"))||
-                        (spoken_user_words[i].equalsIgnoreCase("Purchase"))||
-                        (spoken_user_words[i].equalsIgnoreCase("Purchases"))||
-                        (spoken_user_words[i].equalsIgnoreCase("Inventory"))||
-                        (spoken_user_words[i].equalsIgnoreCase("Inventories"))||
-                        (spoken_user_words[i].equalsIgnoreCase("Stock"))||
-                        (spoken_user_words[i].equalsIgnoreCase("Stocks")))
-                {
-                    entityflag = entityflag + 1;
-                }
-                if((spoken_user_words[i].equalsIgnoreCase("what"))||
-                        (spoken_user_words[i].equalsIgnoreCase("how"))||
-                        (spoken_user_words[i].equalsIgnoreCase("where"))||
-                        (spoken_user_words[i].equalsIgnoreCase("who"))||
-                        (spoken_user_words[i].equalsIgnoreCase("when"))||
-                        (spoken_user_words[i].equalsIgnoreCase("which")))
-                {
-                    wh_qstn_flg = wh_qstn_flg + 1;
+         }
 
-                }
-            }
 
-        }
-            System.out.println("wh question flag"+wh_qstn_flg);
-          System.out.println("Entity flag"+entityflag);
-        if (wh_qstn_flg==1)
-        {
-            if(entityflag ==1)
-            {
-                footer_marque_txt.setText(tempresult);
-                speakOut("Do you mean " + "\t" + tempresult+"\n"+
-                        "Please say go or proceed to process your question");
+     }else {
+         spoken_user_words = sentence.trim().split("\\s+");
+         if (spoken_user_words.length <= 10) {
+             System.out.println("word length " + spoken_user_words.length);
+             for (int i = 0; i < spoken_user_words.length; i++) {
+                 System.out.println("word at position " + i + " is " + spoken_user_words[i]);
+                 if (spoken_user_words[i].length() > 45) {
+                     speakOut("Sorry !! We found that your Question has one or more invalid " +
+                             "word!!" + "\n" + "Please tab and Try again");
+                     footer_marque_txt.setText("Please tab and speak again");
+                     pre_validated_text = "";
+                     break;
+                 } else {
+                     if ((spoken_user_words[i].equalsIgnoreCase("Sale")) ||
+                             (spoken_user_words[i].equalsIgnoreCase("Sales")) ||
+                             (spoken_user_words[i].equalsIgnoreCase("Purchase")) ||
+                             (spoken_user_words[i].equalsIgnoreCase("Purchases")) ||
+                             (spoken_user_words[i].equalsIgnoreCase("Inventory")) ||
+                             (spoken_user_words[i].equalsIgnoreCase("Inventories")) ||
+                             (spoken_user_words[i].equalsIgnoreCase("Stock")) ||
+                             (spoken_user_words[i].equalsIgnoreCase("Stocks"))) {
+                         entityflag = entityflag + 1;
+                     }
+                     if ((spoken_user_words[i].equalsIgnoreCase("what")) ||
+                             (spoken_user_words[i].equalsIgnoreCase("how")) ||
+                             (spoken_user_words[i].equalsIgnoreCase("where")) ||
+                             (spoken_user_words[i].equalsIgnoreCase("who")) ||
+                             (spoken_user_words[i].equalsIgnoreCase("when")) ||
+                             (spoken_user_words[i].equalsIgnoreCase("which"))) {
+                         wh_qstn_flg = wh_qstn_flg + 1;
+                     }
+                 }
 
-            }else if(entityflag >=1){
+             }
+             System.out.println("wh question flag" + wh_qstn_flg);
+             System.out.println("Entity flag" + entityflag);
+             if (wh_qstn_flg == 1) {
+                 if (entityflag == 1) {
+                     non_english_flag = 0;
+                     for (int i = 0; i < spoken_user_words.length; i++) {
 
-                speakOut("Sorry !! there cannot be more than one Entity " +
-                        "in your Question"+"\n"+"Please tab and speak a valid question");
-                footer_marque_txt.setText("Please tab and speak again");
-            }
-            else if(entityflag >=0){
-                speakOut("Sorry !! We found no Entity in your Question"+"\n"+
-                        "Please tab and speak a valid question");
-                footer_marque_txt.setText("Please tab and speak again");
-            }
-        }else if(wh_qstn_flg>1)
-                {
-                    speakOut("Sorry !! there cannot be more than one W.H Question"+"\n"+
-                            "Please tab and speak a valid question");
-                    footer_marque_txt.setText("Please tab and speak again");
-                }
-            else if(wh_qstn_flg==0)
-                    {
-                        speakOut("Sorry !! We found no W.H Question"+"\n"+
-                                "Please tab and speak a valid question");
-                        footer_marque_txt.setText("Please tab and speak again");
-                    }
-        } else {
-            speakOut("Sorry !! We found that your Question exceeds the maximum Length!!"+"\n"+
-                    "Please tab and Try again with a new Question");
-          footer_marque_txt.setText("Please tab and speak again");
-      }
+                         if ((spoken_user_words[i].equalsIgnoreCase("aap"))
+                                 || (spoken_user_words[i].equalsIgnoreCase("mein"))
+                                 || (spoken_user_words[i].equalsIgnoreCase("tum"))
+                                 || (spoken_user_words[i].equalsIgnoreCase("kya"))
+                                 || (spoken_user_words[i].equalsIgnoreCase("hai"))
+                                 || (spoken_user_words[i].equalsIgnoreCase("aaj"))
+                                 || (spoken_user_words[i].equalsIgnoreCase("kal"))
+                                 || (spoken_user_words[i].equalsIgnoreCase("tera"))
+                                 || (spoken_user_words[i].equalsIgnoreCase("tu"))
+                                 || (spoken_user_words[i].equalsIgnoreCase("kaha"))
+                                 || (spoken_user_words[i].equalsIgnoreCase("ho"))
+                                 || (spoken_user_words[i].equalsIgnoreCase("mera"))
+                                 || (spoken_user_words[i].equalsIgnoreCase("apne"))
+                                 || (spoken_user_words[i].equalsIgnoreCase("kuch"))
+                                 || (spoken_user_words[i].equalsIgnoreCase("hotā"))
+                                 || (spoken_user_words[i].equalsIgnoreCase("se"))
+                                 || (spoken_user_words[i].equalsIgnoreCase("bahut"))
+                                 || (spoken_user_words[i].equalsIgnoreCase("hone"))
+                                 || (spoken_user_words[i].equalsIgnoreCase("din"))
+                                 || (spoken_user_words[i].equalsIgnoreCase("iske"))
+                                 || (spoken_user_words[i].equalsIgnoreCase("liye"))
+                                 || (spoken_user_words[i].equalsIgnoreCase("kyu"))
+                                 || (spoken_user_words[i].equalsIgnoreCase("kaun"))
+                                 || (spoken_user_words[i].equalsIgnoreCase("lage"))
+                                 || (spoken_user_words[i].equalsIgnoreCase("Ki"))
+                                 || (spoken_user_words[i].equalsIgnoreCase("Aur"))
+                                 || (spoken_user_words[i].equalsIgnoreCase("ek"))
+                                 || (spoken_user_words[i].equalsIgnoreCase("Hain"))
+                                 || (spoken_user_words[i].equalsIgnoreCase("Yah"))
+                                 || (spoken_user_words[i].equalsIgnoreCase("Tha"))
+                                 || (spoken_user_words[i].equalsIgnoreCase("uske"))
+                                 || (spoken_user_words[i].equalsIgnoreCase("uska"))
+                                 || (spoken_user_words[i].equalsIgnoreCase("Khana"))
+                                 || (spoken_user_words[i].equalsIgnoreCase("Naam"))
+                                 || (spoken_user_words[i].equalsIgnoreCase("Sabdh"))
+                                 || (spoken_user_words[i].equalsIgnoreCase("Nahi"))
+                                 || (spoken_user_words[i].equalsIgnoreCase("Sab"))
+                                 || (spoken_user_words[i].equalsIgnoreCase("kiska"))
+                                 || (spoken_user_words[i].equalsIgnoreCase("din"))
+                                 )
+                             non_english_flag = 1;
+
+                     }
+                     if (non_english_flag == 0) {
+                         pre_validated_text = tempresult;
+                         footer_marque_txt.setText(tempresult);
+                         speakOut("Do you mean " + "\t" + tempresult + "\n" +
+                                 "Please say go or proceed to process your question");
+                     } else {
+                         speakOut("it seams you are not speaking english " + "\n" +
+                                 "Please tab and ask a valid question");
+                         footer_marque_txt.setText("Please tab and speak again");
+                         pre_validated_text = "";
+                     }
+
+                 } else if (entityflag >= 1) {
+
+                     speakOut("Sorry !! there cannot be more than one Entity " +
+                             "in your Question" + "\n" + "Please tab and speak a valid question");
+                     footer_marque_txt.setText("Please tab and speak again");
+                     pre_validated_text = "";
+                 } else if (entityflag >= 0) {
+                     speakOut("Sorry !! We found no Entity in your Question" + "\n" +
+                             "Please tab and speak a valid question");
+                     footer_marque_txt.setText("Please tab and speak again");
+                     pre_validated_text = "";
+                 }
+             } else if (wh_qstn_flg > 1) {
+                 speakOut("Sorry !! there cannot be more than one W.H Question" + "\n" +
+                         "Please tab and speak a valid question");
+                 footer_marque_txt.setText("Please tab and speak again");
+                 pre_validated_text = "";
+             } else if (wh_qstn_flg == 0) {
+                 speakOut("Sorry !! We found no W.H Question" + "\n" +
+                         "Please tab and speak a valid question");
+                 footer_marque_txt.setText("Please tab and speak again");
+                 pre_validated_text = "";
+             }
+         } else {
+             speakOut("Sorry !! We found that your Question exceeds the maximum Length!!" + "\n" +
+                     "Please tab and Try again with a new Question");
+             footer_marque_txt.setText("Please tab and speak again");
+             pre_validated_text = "";
+         }
+     }
     }
 }
