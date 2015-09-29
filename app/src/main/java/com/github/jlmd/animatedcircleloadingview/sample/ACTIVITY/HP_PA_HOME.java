@@ -20,7 +20,10 @@ import android.widget.ImageButton;
 import android.widget.TextView;
 import com.app.jlmd.animatedcircleloadingview.sample.R;
 import com.github.jlmd.animatedcircleloadingview.AnimatedCircleLoadingView;
+import com.github.jlmd.animatedcircleloadingview.sample.ACTIVITY.APP_CONSTANT.AppConstant;
 import com.jpardogo.android.googleprogressbar.library.GoogleProgressBar;
+import com.pixplicity.easyprefs.library.Prefs;
+
 import java.util.ArrayList;
 import java.util.Locale;
 import android.view.textservice.SentenceSuggestionsInfo;
@@ -48,15 +51,17 @@ public class HP_PA_HOME extends Activity implements RecognitionListener ,
     GoogleProgressBar mProgressBar;
     String tempresult;
     String spoken_user_words[];
-    private SpellCheckerSession mScs;
-    ArrayList<String> suggesion;
-    TextServicesManager tsm;
-    SpellCheckerSession session;
+    private SpellCheckerSession scs;
+    private static ArrayList<String> suggesion;
+    int entityflag;
+    int wh_qstn_flg;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        globaltext = "Welcome to Bytech India H.P Partner Assists";
+        globaltext = Prefs.getString(AppConstant.shared_wishing_time, "")+"\n"+
+                Prefs.getString(AppConstant.shared_partner_name, "")+"\n"+
+                "welcome to bytech india "+"\n"+"please tab and ask your question";
         tts = new TextToSpeech(this, this);
         System.out.println("speech status onstart" + tts.isSpeaking());
         //layout declaration
@@ -64,6 +69,8 @@ public class HP_PA_HOME extends Activity implements RecognitionListener ,
         //setting the animation
         animScale = AnimationUtils.loadAnimation(this,
                      R.anim.anim_scale);
+
+
         //layout reference
         hppa_dcl_layout_variables();
         //widget fonts
@@ -80,45 +87,29 @@ public class HP_PA_HOME extends Activity implements RecognitionListener ,
         recognizerIntent.putExtra(RecognizerIntent.EXTRA_LANGUAGE_MODEL,
                 RecognizerIntent.LANGUAGE_MODEL_WEB_SEARCH);
         recognizerIntent.putExtra(RecognizerIntent.EXTRA_MAX_RESULTS, 3);
-        suggesion = new ArrayList<String>();
-        fetchSuggestionsFor("liv");
-        prevalidating_sentence(globaltext);
+
+
+
 
     }//oncreate ends here
 
     @Override
-    public void onGetSuggestions(SuggestionsInfo[] results) {
-        System.out.println("inside on get suggesion");
+    public void onGetSuggestions(final SuggestionsInfo[] arg0) {
+        suggesion = new ArrayList<String>();
+        for (int i = 0; i < arg0.length; ++i) {
+            final int len = arg0[i].getSuggestionsCount();
+
+            for (int j = 0; j < len; ++j) {
+                suggesion.add(arg0[i].getSuggestionAt(j));
+                System.out.println("suggestions " + arg0[i].getSuggestionAt(j));
+            }
+        }
+        System.out.println("my length" + suggesion.size());
     }
 
     @Override
-    public void onGetSentenceSuggestions(SentenceSuggestionsInfo[] results) {
-
-       // final StringBuffer sb = new StringBuffer("");
-        System.out.println("inside on get Sentence suggesion");
-
-        for(SentenceSuggestionsInfo result:results){
-            int n = result.getSuggestionsCount();
-            for(int i=0; i < n; i++){
-                int m = result.getSuggestionsInfoAt(i).getSuggestionsCount();
-
-                for(int k=0; k < m; k++) {
-//                    sb.append(result.getSuggestionsInfoAt(i).getSuggestionAt(k))
-//                            .append("\n");
-                    suggesion.add(result.getSuggestionsInfoAt(i).getSuggestionAt(k));
-
-                    System.out.println("ongetsuggetions:" + result.getSuggestionsInfoAt(i).getSuggestionAt(k));
-
-                }
-
-            }
-        }
-        System.out.println("sugetion length"+suggesion.size());
-    }
-
-    private void fetchSuggestionsFor(String input){
-
-        System.out.println("inside fetch suggesion");
+    public void onGetSentenceSuggestions(SentenceSuggestionsInfo[] arg0) {
+        // TODO Auto-generated method stub
     }
 
     public void hppa_dcl_layout() {
@@ -150,7 +141,6 @@ public class HP_PA_HOME extends Activity implements RecognitionListener ,
         super.onResume();
 
         System.out.println("speech status onresume" + tts.isSpeaking());
-
         home_speech_imgbtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -196,7 +186,7 @@ public class HP_PA_HOME extends Activity implements RecognitionListener ,
         Log.i(LOG_TAG, "onEndOfSpeech");
         //  progressBar.setIndeterminate(true);
         //   toggleButton.setChecked(false);
-        home_speech_txtvw.setText("Listening . . .");
+        home_speech_txtvw.setText("please wait");
     }
 
     @Override
@@ -240,13 +230,11 @@ public class HP_PA_HOME extends Activity implements RecognitionListener ,
         for (String result : matches)
             text += result + "\n";
         tempresult = matches.get(0);
-        home_speech_txtvw.setText(matches.get(0));
-
-   //     prevalidating_sentence(globaltext);
-        footer_marque_txt.setText(tempresult);
-        speakOut("Do you mean " + "\t" + tempresult+ "Please say go or proceed to process your question");
+        home_speech_txtvw.setText("tab to speak");
         home_speech_imgbtn.setClickable(true);
         mProgressBar.setVisibility(View.GONE);
+        prevalidating_sentence(tempresult);
+
     }
 
     @Override
@@ -302,7 +290,6 @@ public class HP_PA_HOME extends Activity implements RecognitionListener ,
 
             int result = tts.setLanguage(Locale.UK);
 
-
             tts.setSpeechRate((float) 1.5);
             System.out.println("tts init status if" + status);
             tts.setPitch((float) -1); // set pitch level
@@ -333,26 +320,88 @@ public class HP_PA_HOME extends Activity implements RecognitionListener ,
 
     private void prevalidating_sentence(String sentence)
     {
+        entityflag = 0;
+        wh_qstn_flg = 0;
         spoken_user_words = sentence.trim().split("\\s+");
-
+      if(spoken_user_words.length<=10)
+      {
         System.out.println("word length "+spoken_user_words.length);
         for(int i =0; i<spoken_user_words.length; i++)
         {
-            System.out.println("word at position "+i+" is "+spoken_user_words[i]);
-            tsm =(TextServicesManager) getSystemService(TEXT_SERVICES_MANAGER_SERVICE);
+            System.out.println("word at position " + i + " is " + spoken_user_words[i]);
 
-            session = tsm.newSpellCheckerSession(null, Locale.ENGLISH, this, true);
-            session.getSentenceSuggestions(
-                    new TextInfo[]{new TextInfo(spoken_user_words[i])},
-                    8
-            );
-//            fetchSuggestionsFor("Peter");
-            System.out.println("my length" + suggesion.size());
-//            System.out.println("suggetion 1 "+suggesion.get(0));
-//            System.out.println("suggetion 2 "+suggesion.get(2));
-//            System.out.println("suggetion 3 "+suggesion.get(3));
-//            System.out.println("suggetion 4 "+suggesion.get(4));
+            final TextServicesManager tsm = (TextServicesManager) getSystemService(Context.TEXT_SERVICES_MANAGER_SERVICE);
+            scs = tsm.newSpellCheckerSession(null, null, this, true);
+            scs.getSuggestions(new TextInfo(spoken_user_words[i]), 5);
+            //  fetchSuggestionsFor("Peter");
+            if(spoken_user_words[i].length()>45)
+            {
+                speakOut("Sorry !! We found that your Question has one or more invalid " +
+                        "word!!"+"\n"+"Please tab and Try again");
+                footer_marque_txt.setText("Please tab and speak again");
+                break;
+            }else{
+                if ((spoken_user_words[i].equalsIgnoreCase("Sale"))||
+                        (spoken_user_words[i].equalsIgnoreCase("Sales"))||
+                        (spoken_user_words[i].equalsIgnoreCase("Purchase"))||
+                        (spoken_user_words[i].equalsIgnoreCase("Purchases"))||
+                        (spoken_user_words[i].equalsIgnoreCase("Inventory"))||
+                        (spoken_user_words[i].equalsIgnoreCase("Inventories"))||
+                        (spoken_user_words[i].equalsIgnoreCase("Stock"))||
+                        (spoken_user_words[i].equalsIgnoreCase("Stocks")))
+                {
+                    entityflag = entityflag + 1;
+                }
+                if((spoken_user_words[i].equalsIgnoreCase("what"))||
+                        (spoken_user_words[i].equalsIgnoreCase("how"))||
+                        (spoken_user_words[i].equalsIgnoreCase("where"))||
+                        (spoken_user_words[i].equalsIgnoreCase("who"))||
+                        (spoken_user_words[i].equalsIgnoreCase("when"))||
+                        (spoken_user_words[i].equalsIgnoreCase("which")))
+                {
+                    wh_qstn_flg = wh_qstn_flg + 1;
+
+                }
+            }
+
         }
+            System.out.println("wh question flag"+wh_qstn_flg);
+          System.out.println("Entity flag"+entityflag);
+        if (wh_qstn_flg==1)
+        {
+            if(entityflag ==1)
+            {
+                footer_marque_txt.setText(tempresult);
+                speakOut("Do you mean " + "\t" + tempresult+"\n"+
+                        "Please say go or proceed to process your question");
 
+            }else if(entityflag >=1){
+
+                speakOut("Sorry !! there cannot be more than one Entity " +
+                        "in your Question"+"\n"+"Please tab and speak a valid question");
+                footer_marque_txt.setText("Please tab and speak again");
+            }
+            else if(entityflag >=0){
+                speakOut("Sorry !! We found no Entity in your Question"+"\n"+
+                        "Please tab and speak a valid question");
+                footer_marque_txt.setText("Please tab and speak again");
+            }
+        }else if(wh_qstn_flg>1)
+                {
+                    speakOut("Sorry !! there cannot be more than one W.H Question"+"\n"+
+                            "Please tab and speak a valid question");
+                    footer_marque_txt.setText("Please tab and speak again");
+                }
+            else if(wh_qstn_flg==0)
+                    {
+                        speakOut("Sorry !! We found no W.H Question"+"\n"+
+                                "Please tab and speak a valid question");
+                        footer_marque_txt.setText("Please tab and speak again");
+                    }
+        } else {
+            speakOut("Sorry !! We found that your Question exceeds the maximum Length!!"+"\n"+
+                    "Please tab and Try again with a new Question");
+          footer_marque_txt.setText("Please tab and speak again");
+      }
     }
 }

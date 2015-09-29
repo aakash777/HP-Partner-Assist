@@ -31,7 +31,7 @@ public class HP_PA_SPLASH extends Activity {
 
         //Check TTS Installed or not
         //updated by Aakash
-        initTts();
+        //   initTts();
 
         startLoading();
 
@@ -43,13 +43,13 @@ public class HP_PA_SPLASH extends Activity {
 
         if (timeOfDay >= 0 && timeOfDay < 12) {
             Prefs.putString(AppConstant.shared_wishing_time,"Good Morning" );
-            Toast.makeText(this, "Good Morning", Toast.LENGTH_LONG).show();
+
         } else if (timeOfDay >= 12 && timeOfDay < 16) {
             Prefs.putString(AppConstant.shared_wishing_time,"Good Afternoon" );
-            Toast.makeText(this, "Good Afternoon", Toast.LENGTH_LONG).show();
+
         } else if (timeOfDay >= 16 && timeOfDay < 24) {
             Prefs.putString(AppConstant.shared_wishing_time,"Good Evening" );
-            Toast.makeText(this, "Good Evening", Toast.LENGTH_LONG).show();
+
         }
 
     }
@@ -105,9 +105,17 @@ public class HP_PA_SPLASH extends Activity {
                     } catch (InterruptedException e) {
                         e.printStackTrace();
                     }
-                    Intent splshint = new Intent(HP_PA_SPLASH.this, HP_PA_SIGNIN.class);
-                    startActivity(splshint);
-                    finish();
+                    if(Prefs.getString(AppConstant.shared_partner_id, "").equals(""))
+                    {
+                        Intent splshint = new Intent(HP_PA_SPLASH.this, HP_PA_SIGNIN.class);
+                        startActivity(splshint);
+                        finish();
+                    }
+                    else{
+                        Intent splshint = new Intent(HP_PA_SPLASH.this, HP_PA_HOME.class);
+                        startActivity(splshint);
+                        finish();
+                    }
                 }
 
             }
