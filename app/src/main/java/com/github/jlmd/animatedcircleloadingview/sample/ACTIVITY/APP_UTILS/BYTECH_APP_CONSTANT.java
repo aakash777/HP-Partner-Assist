@@ -1,16 +1,11 @@
-package com.github.jlmd.animatedcircleloadingview.sample.ACTIVITY.APP_CONSTANT;
-
-import android.app.Activity;
-import android.content.SharedPreferences;
-import android.content.SharedPreferences.Editor;
-import android.preference.PreferenceManager;
+package com.github.jlmd.animatedcircleloadingview.sample.ACTIVITY.APP_UTILS;
 
 
 /**
  * Created by Aakash Gupta on 9/24/2015.
  */
 
-public class AppConstant {
+public class BYTECH_APP_CONSTANT {
 
     public static String shared_partner_id = "shared_partner_id";
     public static String shared_partner_name = "shared_partner_name";

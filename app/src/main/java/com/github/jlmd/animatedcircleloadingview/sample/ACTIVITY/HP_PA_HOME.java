@@ -2,7 +2,6 @@ package com.github.jlmd.animatedcircleloadingview.sample.ACTIVITY;
 
 
 import android.app.Activity;
-import android.content.Context;
 import android.content.Intent;
 import android.graphics.Typeface;
 import android.os.Bundle;
@@ -14,22 +13,20 @@ import android.util.Log;
 import android.view.View;
 import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
-import android.view.textservice.TextInfo;
-import android.view.textservice.TextServicesManager;
+import android.widget.AnalogClock;
+import android.widget.DigitalClock;
 import android.widget.ImageButton;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
+import android.widget.Toast;
+
 import com.app.jlmd.animatedcircleloadingview.sample.R;
-import com.github.jlmd.animatedcircleloadingview.AnimatedCircleLoadingView;
-import com.github.jlmd.animatedcircleloadingview.sample.ACTIVITY.APP_CONSTANT.AppConstant;
+import com.github.jlmd.animatedcircleloadingview.sample.ACTIVITY.APP_UTILS.BYTECH_APP_CONSTANT;
 import com.jpardogo.android.googleprogressbar.library.GoogleProgressBar;
 import com.pixplicity.easyprefs.library.Prefs;
 //import com.acapelagroup.android.tts.acattsandroid;
 import java.util.ArrayList;
 import java.util.Locale;
-import android.view.textservice.SentenceSuggestionsInfo;
-import android.view.textservice.SpellCheckerSession;
-import android.view.textservice.SpellCheckerSession.SpellCheckerSessionListener;
-import android.view.textservice.SuggestionsInfo;
 
 /**
  * Created by Mainak Karmakar on 15/09/2015.
@@ -43,7 +40,7 @@ public class HP_PA_HOME extends Activity implements RecognitionListener , TextTo
     private SpeechRecognizer speech = null;
     private Intent recognizerIntent;
     private String LOG_TAG = "HP_PA_HOME";
-//    private AnimatedCircleLoadingView animatedCircleLoadingView;
+//  private AnimatedCircleLoadingView animatedCircleLoadingView;
     private TextToSpeech tts;
     String globaltext;
     Animation animScale;
@@ -54,23 +51,21 @@ public class HP_PA_HOME extends Activity implements RecognitionListener , TextTo
     int wh_qstn_flg;
     int non_english_flag;
     String pre_validated_text;
+    RelativeLayout progress_timer_rl;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         pre_validated_text = "";
-        globaltext = Prefs.getString(AppConstant.shared_wishing_time, "")+"\n"+
-                Prefs.getString(AppConstant.shared_partner_name, "")+"\n"+
+        globaltext = Prefs.getString(BYTECH_APP_CONSTANT.shared_wishing_time, "")+"\n"+
+                Prefs.getString(BYTECH_APP_CONSTANT.shared_partner_name, "")+"\n"+
                 "welcome to bytech india "+"\n"+"please tab and ask your question";
         tts = new TextToSpeech(this, this);
         System.out.println("speech status onstart" + tts.isSpeaking());
         //layout declaration
         hppa_dcl_layout();
         //setting the animation
-        animScale = AnimationUtils.loadAnimation(this,
-                     R.anim.anim_scale);
-
-
+        animScale = AnimationUtils.loadAnimation(this,R.anim.anim_scale);
         //layout reference
         hppa_dcl_layout_variables();
         //widget fonts
@@ -102,6 +97,11 @@ public class HP_PA_HOME extends Activity implements RecognitionListener , TextTo
         home_powered_txt = (TextView) findViewById(R.id.footer_powered_txt);
         mProgressBar = (GoogleProgressBar) findViewById(R.id.google_progress);
         footer_marque_txt = (TextView) findViewById(R.id.footer_marque_txt);
+        progress_timer_rl = (RelativeLayout) findViewById(R.id.progress_timer_rl);
+        AnalogClock analog = (AnalogClock) findViewById(R.id.analog_clock);
+        //analog clock
+        DigitalClock digital = (DigitalClock) findViewById(R.id.digital_clock);
+        //digital clock
 
     }
 
@@ -302,19 +302,33 @@ public class HP_PA_HOME extends Activity implements RecognitionListener , TextTo
 
         entityflag = 0;
         wh_qstn_flg = 0;
-     if((sentence.equalsIgnoreCase("proceed"))||(sentence.equalsIgnoreCase("proceed")))
+     System.out.println("spoken word"+sentence);
+        Toast.makeText(getApplicationContext(),
+                "you spoke :- "+sentence ,Toast.LENGTH_SHORT).show();
+         if((sentence.equalsIgnoreCase("proceed"))||(sentence.equalsIgnoreCase("proceeds"))
+             ||(sentence.equalsIgnoreCase("go")))
      {
          System.out.println("validated text"+pre_validated_text);
          if(!pre_validated_text.equals(""))
          {
              speakOut("please wait!! while we process your question");
              footer_marque_txt.setText("");
-         }else{
-
+             progress_timer_rl.setVisibility(View.VISIBLE);
+         }else
+         {
+             speakOut("Sorry!! we do not have any question to move forward"+
+                     "\n"+"Please Tab and ask your question");
          }
 
+     }else  if((sentence.equalsIgnoreCase("cancel"))||(sentence.equalsIgnoreCase("cancels"))
+                 ||(sentence.equalsIgnoreCase("cance")))
+         {
+             speakOut("your previous question has been cancelled"+
+                     "\n"+"Please Tab and ask your question");
+             pre_validated_text = "";
 
-     }else {
+         }
+         else {
          spoken_user_words = sentence.trim().split("\\s+");
          if (spoken_user_words.length <= 10) {
              System.out.println("word length " + spoken_user_words.length);
@@ -324,7 +338,7 @@ public class HP_PA_HOME extends Activity implements RecognitionListener , TextTo
                      speakOut("Sorry !! We found that your Question has one or more invalid " +
                              "word!!" + "\n" + "Please tab and Try again");
                      footer_marque_txt.setText("Please tab and speak again");
-                     pre_validated_text = "";
+
                      break;
                  } else {
                      if ((spoken_user_words[i].equalsIgnoreCase("Sale")) ||
@@ -407,7 +421,7 @@ public class HP_PA_HOME extends Activity implements RecognitionListener , TextTo
                          speakOut("it seams you are not speaking english " + "\n" +
                                  "Please tab and ask a valid question");
                          footer_marque_txt.setText("Please tab and speak again");
-                         pre_validated_text = "";
+
                      }
 
                  } else if (entityflag >= 1) {
@@ -415,29 +429,29 @@ public class HP_PA_HOME extends Activity implements RecognitionListener , TextTo
                      speakOut("Sorry !! there cannot be more than one Entity " +
                              "in your Question" + "\n" + "Please tab and speak a valid question");
                      footer_marque_txt.setText("Please tab and speak again");
-                     pre_validated_text = "";
+
                  } else if (entityflag >= 0) {
                      speakOut("Sorry !! We found no Entity in your Question" + "\n" +
                              "Please tab and speak a valid question");
                      footer_marque_txt.setText("Please tab and speak again");
-                     pre_validated_text = "";
+
                  }
              } else if (wh_qstn_flg > 1) {
                  speakOut("Sorry !! there cannot be more than one W.H Question" + "\n" +
                          "Please tab and speak a valid question");
                  footer_marque_txt.setText("Please tab and speak again");
-                 pre_validated_text = "";
+
              } else if (wh_qstn_flg == 0) {
                  speakOut("Sorry !! We found no W.H Question" + "\n" +
                          "Please tab and speak a valid question");
                  footer_marque_txt.setText("Please tab and speak again");
-                 pre_validated_text = "";
+
              }
          } else {
              speakOut("Sorry !! We found that your Question exceeds the maximum Length!!" + "\n" +
                      "Please tab and Try again with a new Question");
              footer_marque_txt.setText("Please tab and speak again");
-             pre_validated_text = "";
+
          }
      }
     }

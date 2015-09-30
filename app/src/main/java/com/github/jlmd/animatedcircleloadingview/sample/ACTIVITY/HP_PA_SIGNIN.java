@@ -24,8 +24,8 @@ import android.util.Log;
 import android.widget.Toast;
 
 import com.app.jlmd.animatedcircleloadingview.sample.R;
-import com.github.jlmd.animatedcircleloadingview.sample.ACTIVITY.APP_CONSTANT.AppConstant;
-import com.github.jlmd.animatedcircleloadingview.sample.ACTIVITY.MAIN_APPLICATION.ConnectionDetector;
+import com.github.jlmd.animatedcircleloadingview.sample.ACTIVITY.APP_UTILS.BYTECH_APP_CONSTANT;
+import com.github.jlmd.animatedcircleloadingview.sample.ACTIVITY.MAIN_APPLICATION.BYTECH_CONNECTION_DETECTOR;
 import com.github.jlmd.animatedcircleloadingview.sample.ACTIVITY.MODEL.HP_PA_VALIDATION;
 import com.pixplicity.easyprefs.library.Prefs;
 
@@ -42,7 +42,7 @@ public class HP_PA_SIGNIN extends Activity {
     HP_PA_VALIDATION Validation;
     String get_prtnrid_edittxt, get_password_edittxt;
     ProgressDialog PD;
-    private ConnectionDetector cd;
+    private BYTECH_CONNECTION_DETECTOR cd;
     private Boolean isInternetPresent = false;
     private String partner_id, partner_name, partner_region, partner_state, validate_authentic_user;
 
@@ -60,7 +60,7 @@ public class HP_PA_SIGNIN extends Activity {
         //widget fonts
         hppa_set_widget_fonts();
         // Make Conncetion Class Object
-        cd = new ConnectionDetector(getApplicationContext());
+        cd = new BYTECH_CONNECTION_DETECTOR(getApplicationContext());
         //get edit text value
 
         signin_login_btn.setOnClickListener(new View.OnClickListener() {
@@ -196,13 +196,13 @@ public class HP_PA_SIGNIN extends Activity {
             if (validate_authentic_user.equalsIgnoreCase("1")) {
 
 
-                Prefs.putString(AppConstant.shared_partner_id, partner_id);
+                Prefs.putString(BYTECH_APP_CONSTANT.shared_partner_id, partner_id);
 
-                Prefs.putString(AppConstant.shared_partner_name, partner_name);
+                Prefs.putString(BYTECH_APP_CONSTANT.shared_partner_name, partner_name);
 
-                Prefs.putString(AppConstant.shared_partner_state, partner_state);
+                Prefs.putString(BYTECH_APP_CONSTANT.shared_partner_state, partner_state);
 
-                Prefs.putString(AppConstant.shared_partner_region, partner_region);
+                Prefs.putString(BYTECH_APP_CONSTANT.shared_partner_region, partner_region);
 
 
                 Intent goToHomePage = new Intent(HP_PA_SIGNIN.this, HP_PA_HOME.class);

@@ -4,11 +4,11 @@ import android.content.Context;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 
-public class ConnectionDetector {
+public class BYTECH_CONNECTION_DETECTOR {
 
 	private Context _context;
 
-	public ConnectionDetector(Context context) {
+	public BYTECH_CONNECTION_DETECTOR(Context context) {
 		this._context = context;
 	}
 
