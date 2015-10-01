@@ -2,15 +2,22 @@ package com.github.jlmd.animatedcircleloadingview.sample.ACTIVITY;
 
 
 import android.app.Activity;
+import android.app.Dialog;
+import android.content.Context;
 import android.content.Intent;
 import android.graphics.Typeface;
 import android.os.Bundle;
+import android.os.CountDownTimer;
 import android.speech.RecognitionListener;
 import android.speech.RecognizerIntent;
 import android.speech.SpeechRecognizer;
 import android.speech.tts.TextToSpeech;
 import android.util.Log;
+import android.view.Gravity;
 import android.view.View;
+import android.view.ViewGroup;
+import android.view.Window;
+import android.view.WindowManager;
 import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
 import android.widget.AnalogClock;
@@ -35,7 +42,7 @@ public class HP_PA_HOME extends Activity implements RecognitionListener , TextTo
 {
 
     ImageButton home_speech_imgbtn;
-    TextView home_speech_txtvw,home_powered_txt,footer_marque_txt;
+    TextView home_speech_txtvw,home_powered_txt,footer_marque_txt,timer_txtvw;
     Typeface typeFace;
     private SpeechRecognizer speech = null;
     private Intent recognizerIntent;
@@ -51,7 +58,12 @@ public class HP_PA_HOME extends Activity implements RecognitionListener , TextTo
     int wh_qstn_flg;
     int non_english_flag;
     String pre_validated_text;
-    RelativeLayout progress_timer_rl;
+    final Context context = this;
+    private final long startTime = 30 * 1000;
+    private final long interval = 1 * 1000;
+    private CountDownTimer countDownTimer;
+    private boolean timerHasStarted = false;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -97,7 +109,7 @@ public class HP_PA_HOME extends Activity implements RecognitionListener , TextTo
         home_powered_txt = (TextView) findViewById(R.id.footer_powered_txt);
         mProgressBar = (GoogleProgressBar) findViewById(R.id.google_progress);
         footer_marque_txt = (TextView) findViewById(R.id.footer_marque_txt);
-        progress_timer_rl = (RelativeLayout) findViewById(R.id.progress_timer_rl);
+
         AnalogClock analog = (AnalogClock) findViewById(R.id.analog_clock);
         //analog clock
         DigitalClock digital = (DigitalClock) findViewById(R.id.digital_clock);
@@ -123,6 +135,27 @@ public class HP_PA_HOME extends Activity implements RecognitionListener , TextTo
             @Override
             public void onClick(View view) {
 
+                // custom dialog
+                Dialog dialog = new Dialog(context, android.R.style.Theme_Translucent_NoTitleBar_Fullscreen);
+                dialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
+                dialog.setContentView(R.layout.timer_page);
+                Window window = dialog.getWindow();
+                WindowManager.LayoutParams wlp = window.getAttributes();
+                wlp.gravity = Gravity.CENTER;
+                wlp.flags &= ~WindowManager.LayoutParams.FLAG_BLUR_BEHIND;
+                window.setAttributes(wlp);
+                dialog.getWindow().setLayout(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT);
+                dialog.show();
+                timer_txtvw = (TextView) dialog.findViewById(R.id.countdown_timer);
+                countDownTimer = new MyCountDownTimer(startTime, interval);
+                timer_txtvw.setText(timer_txtvw.getText() + String.valueOf(startTime / 1000));
+                if (!timerHasStarted) {
+                    countDownTimer.start();
+                    timerHasStarted = true;
+                } else {
+                    countDownTimer.cancel();
+                    timerHasStarted = false;
+                }
                 view.startAnimation(animScale);
                 speech.startListening(recognizerIntent);
                 home_speech_imgbtn.setClickable(false);
@@ -131,6 +164,29 @@ public class HP_PA_HOME extends Activity implements RecognitionListener , TextTo
             }
         });
 
+    }
+
+    public class MyCountDownTimer extends CountDownTimer {
+
+        public MyCountDownTimer(long startTime, long interval) {
+
+            super(startTime, interval);
+
+        }
+
+        @Override
+
+        public void onFinish() {
+            timer_txtvw.setText("Time's up!");
+        }
+
+        @Override
+
+        public void onTick(long millisUntilFinished) {
+
+            timer_txtvw.setText("" + millisUntilFinished / 1000);
+
+        }
     }
 
     @Override
@@ -313,7 +369,7 @@ public class HP_PA_HOME extends Activity implements RecognitionListener , TextTo
          {
              speakOut("please wait!! while we process your question");
              footer_marque_txt.setText("");
-             progress_timer_rl.setVisibility(View.VISIBLE);
+
          }else
          {
              speakOut("Sorry!! we do not have any question to move forward"+
@@ -323,9 +379,18 @@ public class HP_PA_HOME extends Activity implements RecognitionListener , TextTo
      }else  if((sentence.equalsIgnoreCase("cancel"))||(sentence.equalsIgnoreCase("cancels"))
                  ||(sentence.equalsIgnoreCase("cance")))
          {
-             speakOut("your previous question has been cancelled"+
-                     "\n"+"Please Tab and ask your question");
-             pre_validated_text = "";
+             if(!pre_validated_text.equals(""))
+             {
+                 speakOut("your previous question has been cancelled"+
+                         "\n"+"Please Tab and ask your question");
+                 pre_validated_text = "";
+                 footer_marque_txt.setText("");
+
+             } else {
+                 speakOut("there is no previous question to cancel"+
+                         "\n"+"Please Tab and ask your question");
+             }
+
 
          }
          else {
@@ -337,7 +402,7 @@ public class HP_PA_HOME extends Activity implements RecognitionListener , TextTo
                  if (spoken_user_words[i].length() > 45) {
                      speakOut("Sorry !! We found that your Question has one or more invalid " +
                              "word!!" + "\n" + "Please tab and Try again");
-                     footer_marque_txt.setText("Please tab and speak again");
+                   //  footer_marque_txt.setText("Please tab and speak again");
 
                      break;
                  } else {
@@ -416,11 +481,12 @@ public class HP_PA_HOME extends Activity implements RecognitionListener , TextTo
                          pre_validated_text = tempresult;
                          footer_marque_txt.setText(tempresult);
                          speakOut("Do you mean " + "\t" + tempresult + "\n" +
-                                 "Please say go or proceed to process your question");
+                                 "Please say go or proceed to process your question"
+                                 + "\n" + "cancel to ask another");
                      } else {
                          speakOut("it seams you are not speaking english " + "\n" +
                                  "Please tab and ask a valid question");
-                         footer_marque_txt.setText("Please tab and speak again");
+                      //   footer_marque_txt.setText("Please tab and speak again");
 
                      }
 
@@ -428,29 +494,29 @@ public class HP_PA_HOME extends Activity implements RecognitionListener , TextTo
 
                      speakOut("Sorry !! there cannot be more than one Entity " +
                              "in your Question" + "\n" + "Please tab and speak a valid question");
-                     footer_marque_txt.setText("Please tab and speak again");
+                     //   footer_marque_txt.setText("Please tab and speak again");
 
                  } else if (entityflag >= 0) {
                      speakOut("Sorry !! We found no Entity in your Question" + "\n" +
                              "Please tab and speak a valid question");
-                     footer_marque_txt.setText("Please tab and speak again");
+                     //    footer_marque_txt.setText("Please tab and speak again");
 
                  }
              } else if (wh_qstn_flg > 1) {
                  speakOut("Sorry !! there cannot be more than one W.H Question" + "\n" +
                          "Please tab and speak a valid question");
-                 footer_marque_txt.setText("Please tab and speak again");
+                 //footer_marque_txt.setText("Please tab and speak again");
 
              } else if (wh_qstn_flg == 0) {
                  speakOut("Sorry !! We found no W.H Question" + "\n" +
                          "Please tab and speak a valid question");
-                 footer_marque_txt.setText("Please tab and speak again");
+               //  footer_marque_txt.setText("Please tab and speak again");
 
              }
          } else {
              speakOut("Sorry !! We found that your Question exceeds the maximum Length!!" + "\n" +
                      "Please tab and Try again with a new Question");
-             footer_marque_txt.setText("Please tab and speak again");
+         //    footer_marque_txt.setText("Please tab and speak again");
 
          }
      }

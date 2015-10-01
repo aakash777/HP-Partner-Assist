@@ -6,34 +6,7 @@
     android:orientation="vertical"
     >
 
-    <RelativeLayout
-    android:id="@+id/progress_timer_rl"
-    android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    android:layout_weight="100"
-    android:visibility="gone"
-    >
-
-    <!-- Analog Clock -->
-    <AnalogClock
-        android:id="@+id/analog_clock"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_centerHorizontal="true"
-        android:layout_centerVertical="true"
-        />
-
-    <!-- Digital Clock -->
-    <DigitalClock
-        android:id="@+id/digital_clock"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_centerHorizontal="true"
-        android:layout_below="@+id/analog_clock"/>
-
-</RelativeLayout>
-
-    <LinearLayout
+     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:weightSum="100"
