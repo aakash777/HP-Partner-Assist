@@ -6,50 +6,45 @@
     android:background="@color/app_white"
     >
 
-    <TextView
-        android:id="@+id/footer_powered_txt"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_centerHorizontal="true"
-        android:layout_alignParentBottom="true"
-        android:text="@string/signin_foter_txt"
-        android:textColor="@color/splash_grdnt_mdlclr"
-        android:textSize="@dimen/bytech_footer_txtsz"
-        android:layout_marginBottom="@dimen/bytech_footer_margin"
-        />
+    <!--<TextView-->
+        <!--android:id="@+id/footer_powered_txt"-->
+        <!--android:layout_width="wrap_content"-->
+        <!--android:layout_height="wrap_content"-->
+        <!--android:layout_centerHorizontal="true"-->
+        <!--android:layout_alignParentBottom="true"-->
+        <!--android:text="@string/signin_foter_txt"-->
+        <!--android:textColor="@color/splash_grdnt_mdlclr"-->
+        <!--android:textSize="@dimen/bytech_footer_txtsz"-->
+        <!--android:layout_marginBottom="@dimen/bytech_footer_margin"-->
+        <!--/>-->
 
-    <TextView
-        android:id="@+id/footer_response_txt"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:singleLine="true"
-        android:layout_above="@+id/footer_powered_txt"
-        android:layout_marginBottom="@dimen/home_footer_marque_margin"
-        android:layout_centerHorizontal="true"
-        android:text="voice command"
-        android:textColor="@color/home_grey_txtclr"
-        android:textSize="@dimen/bytech_footer_marque_txtsz"
-        android:textStyle="bold"
-        />
 
-    <ImageView
-    android:id="@+id/response_txtbox_imgvw"
+    <EditText
+    android:id="@+id/response_command_txtvw"
     android:layout_width="match_parent"
-    android:layout_height="35dp"
-    android:layout_above="@+id/footer_powered_txt"
+    android:layout_height="@dimen/app_edittext_hgt"
+    android:layout_centerInParent="true"
     android:layout_centerHorizontal="true"
     android:background="@drawable/chatbox"
-    android:layout_marginRight="45dp"
-    android:layout_marginLeft="20dp"
+    android:layout_toLeftOf="@+id/response_speak_btn"
+    android:layout_marginRight="@dimen/response_edtxt_mrgn_rt"
+    android:layout_marginLeft="@dimen/response_edtxt_mrgn_lft"
+    android:text="voice command"
+    android:textColor="@color/home_grey_txtclr"
+    android:textSize="@dimen/bytech_footer_marque_txtsz"
+    android:textStyle="bold"
+    android:singleLine="true"
+    android:editable="false"
+    android:gravity="center_horizontal|center_vertical"
     />
 
     <ImageView
         android:id="@+id/response_speak_btn"
         android:layout_width="@dimen/response_imgvw_width"
         android:layout_height="@dimen/response_imgvw_width"
-        android:layout_alignParentRight="true"
+        android:layout_centerVertical="true"
         android:background="@drawable/speak_pic"
-        android:layout_alignTop="@+id/response_txtbox_imgvw"
-        android:layout_marginRight="5dp"/>
+        android:layout_alignParentRight="true"
+        android:layout_marginRight="@dimen/response_edtxt_mrgn_lft"/>
 
 </RelativeLayout>

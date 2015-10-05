@@ -20,34 +20,23 @@ public class HP_PA_SPLASH extends Activity {
     private AnimatedCircleLoadingView animatedCircleLoadingView;
     private String current_date, current_time, day_of_week;
 
-
-
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
-
 
         super.onCreate(savedInstanceState);
         //layout declaration
         hppa_dcl_layout_t3();
 
-
         //Check TTS Installed or not
         //updated by Aakash
         //   initTts();
 
-
         startLoading();
-
 
         startPercentMockThread();
 
-
         Calendar c = Calendar.getInstance();
         int timeOfDay = c.get(Calendar.HOUR_OF_DAY);
-
-
-
 
         if (timeOfDay >= 0 && timeOfDay < 12) {
             Prefs.putString(BYTECH_APP_CONSTANT.shared_wishing_time,"Good Morning" );
@@ -62,7 +51,6 @@ public class HP_PA_SPLASH extends Activity {
 
 
         }
-
 
     }
 //on create ends here

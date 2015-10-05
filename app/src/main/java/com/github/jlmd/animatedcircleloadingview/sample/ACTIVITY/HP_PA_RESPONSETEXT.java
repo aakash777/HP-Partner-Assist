@@ -7,6 +7,7 @@ import android.os.Bundle;
 import android.view.View;
 import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
+import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
@@ -19,8 +20,8 @@ import com.app.jlmd.animatedcircleloadingview.sample.R;
 public class HP_PA_RESPONSETEXT extends Activity {
 
     Typeface typeFace;
-    TextView response_graphvw_txtvw , response_gridvw_txtvw , response_txtvw_txtvw
-            , footer_response_txt , footer_powered_txt;
+    TextView response_graphvw_txtvw , response_gridvw_txtvw , response_txtvw_txtvw;
+    EditText footer_response_txt;
     RelativeLayout response_header_txtvw_rl,response_header_gridvw_rl,response_header_graphvw_rl;
     ImageView response_txt_imgvw,response_graph_imgvw,response_grid_imgvw,response_speak_btn;
     Animation animScale;
@@ -89,8 +90,8 @@ public class HP_PA_RESPONSETEXT extends Activity {
         response_graphvw_txtvw = (TextView) findViewById(R.id.response_graphvw_txtvw);
         response_gridvw_txtvw = (TextView) findViewById(R.id.response_gridvw_txtvw);
         response_txtvw_txtvw = (TextView) findViewById(R.id.response_txtvw);
-        footer_response_txt = (TextView) findViewById(R.id.footer_response_txt);
-        footer_powered_txt = (TextView) findViewById(R.id.footer_powered_txt);
+        footer_response_txt = (EditText) findViewById(R.id.response_command_txtvw);
+//        footer_powered_txt = (TextView) findViewById(R.id.footer_powered_txt);
         response_header_txtvw_rl = (RelativeLayout) findViewById(R.id.response_header_txtvw_rl);
         response_header_gridvw_rl = (RelativeLayout) findViewById(R.id.response_header_gridvw_rl);
         response_header_graphvw_rl = (RelativeLayout) findViewById(R.id.response_header_graphvw_rl);
@@ -109,7 +110,7 @@ public class HP_PA_RESPONSETEXT extends Activity {
         response_gridvw_txtvw.setTypeface(typeFace);
         response_txtvw_txtvw.setTypeface(typeFace);
         footer_response_txt.setTypeface(typeFace);
-        footer_powered_txt.setTypeface(typeFace);
+//        footer_powered_txt.setTypeface(typeFace);
     }
 
 }

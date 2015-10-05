@@ -8,8 +8,6 @@
 <color name="splash_grdnt_endclr">#00A8D9</color>
 <color name="home_grey_txtclr">#7F7F7F</color>
 <color name="responce_compnt_txtclr">#28CAB3</color>
-
-
-
+<color name="responce_header_bckgrnd">#E7E7E7</color>
 
 </resources>

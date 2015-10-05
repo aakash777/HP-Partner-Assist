@@ -6,7 +6,7 @@
                 android:color="@color/splash_grdnt_strrtclr" />
             <stroke
                 android:width="0.5dp"
-                android:color="@color/home_grey_txtclr"/>
+                android:color="@color/splash_grdnt_strrtclr"/>
             <corners
                 android:radius="1dp" />
         </shape>

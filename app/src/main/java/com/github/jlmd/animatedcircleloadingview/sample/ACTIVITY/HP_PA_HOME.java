@@ -70,7 +70,6 @@ public class HP_PA_HOME extends Activity implements RecognitionListener , TextTo
     private boolean timerHasStarted = false;
     CircularProgressView progressView;
 
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -159,6 +158,9 @@ public class HP_PA_HOME extends Activity implements RecognitionListener , TextTo
         public void onFinish() {
             timer_txtvw.setText("Time's up!");
             progressView.setVisibility(View.GONE);
+            Prefs.putBoolean(BYTECH_APP_CONSTANT.shared_response_flag, true);
+            Intent go_to_response = new Intent(getApplicationContext(), HP_PA_RESPONSEGRAPH.class);
+            startActivity(go_to_response);
         }
 
         @Override
@@ -304,7 +306,7 @@ public class HP_PA_HOME extends Activity implements RecognitionListener , TextTo
         System.out.println("tts init status out"+status);
         if (status == TextToSpeech.SUCCESS) {
 
-            int result = tts.setLanguage(Locale.UK);
+            int result = tts.setLanguage(Locale.ENGLISH);
 
             tts.setSpeechRate((float) 1.1);
             System.out.println("tts init status if" + status);

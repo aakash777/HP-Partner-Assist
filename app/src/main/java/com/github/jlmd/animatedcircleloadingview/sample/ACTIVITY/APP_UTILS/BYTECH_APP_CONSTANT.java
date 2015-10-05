@@ -12,6 +12,7 @@ public class BYTECH_APP_CONSTANT {
     public static String shared_wishing_time = "shared_user_wish";
     public static String shared_partner_region = "shared_partner_region";
     public static String shared_partner_state = "shared_partner_area";
+    public static String shared_response_flag = "response_flag";
 
 
 
