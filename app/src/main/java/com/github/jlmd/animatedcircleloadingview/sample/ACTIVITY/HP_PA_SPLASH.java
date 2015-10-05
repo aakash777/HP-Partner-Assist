@@ -110,7 +110,6 @@ public class HP_PA_SPLASH extends Activity {
     private void startPercentMockThread() {
         Runnable runnable = new Runnable() {
 
-
             @Override
             public void run() {
                 try {
