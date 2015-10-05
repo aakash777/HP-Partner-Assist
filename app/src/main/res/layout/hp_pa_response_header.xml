@@ -1,0 +1,106 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+android:id="@+id/pa_response_header_ll"
+android:layout_width="match_parent"
+android:layout_height="wrap_content"
+android:weightSum="3"
+android:layout_marginTop="@dimen/response_header_all_mrgn"
+android:orientation="horizontal">
+
+<RelativeLayout
+    android:id="@+id/response_header_graphvw_rl"
+    android:layout_width="0dp"
+    android:layout_height="match_parent"
+    android:layout_weight="1"
+    android:background="@drawable/response_white_brdr"
+    >
+
+    <TextView
+        android:id="@+id/response_graphvw_txtvw"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/response_graphvw_txt"
+        android:layout_centerVertical="true"
+        android:layout_alignParentLeft="true"
+        android:textColor="@color/splash_grdnt_strrtclr"
+        android:textStyle="bold"
+        android:textSize="@dimen/response_header_txtsz"
+        android:textAppearance="@style/Base.TextAppearance.AppCompat.Medium"
+        android:layout_marginLeft="@dimen/response_header_all_mrgn"
+        />
+
+    <ImageView
+        android:id="@+id/response_graph_imgvw"
+        android:layout_width="@dimen/response_imgvw_width"
+        android:layout_height="@dimen/response_imgvw_width"
+        android:background="@drawable/line_chart"
+        android:layout_centerVertical="true"
+        android:layout_alignParentRight="true"
+        android:layout_marginRight="@dimen/response_header_all_mrgn"/>
+</RelativeLayout>
+
+<RelativeLayout
+    android:id="@+id/response_header_gridvw_rl"
+    android:layout_width="0dp"
+    android:layout_height="match_parent"
+    android:layout_weight="1"
+    android:background="@drawable/response_white_brdr">
+
+    <TextView
+        android:id="@+id/response_gridvw_txtvw"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/response_gridvw_txt"
+        android:layout_centerVertical="true"
+        android:layout_alignParentLeft="true"
+        android:textColor="@color/splash_grdnt_strrtclr"
+        android:textStyle="bold"
+        android:textAppearance="@style/Base.TextAppearance.AppCompat.Medium"
+        android:textSize="@dimen/response_header_txtsz"
+        android:layout_marginLeft="@dimen/response_header_all_mrgn"
+        />
+
+    <ImageView
+        android:id="@+id/response_grid_imgvw"
+        android:layout_width="@dimen/response_imgvw_width"
+        android:layout_height="@dimen/response_imgvw_width"
+        android:background="@drawable/grid_vw"
+        android:layout_centerVertical="true"
+        android:layout_alignParentRight="true"
+        android:layout_marginRight="@dimen/response_header_all_mrgn"/>
+
+</RelativeLayout>
+
+<RelativeLayout
+    android:id="@+id/response_header_txtvw_rl"
+    android:layout_width="0dp"
+    android:layout_height="match_parent"
+    android:layout_weight="1"
+    android:background="@drawable/response_white_brdr">
+
+    <TextView
+        android:id="@+id/response_txtvw"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/response_txtvw_txt"
+        android:layout_centerVertical="true"
+        android:textAppearance="@style/Base.TextAppearance.AppCompat.Medium"
+        android:layout_alignParentLeft="true"
+        android:textColor="@color/splash_grdnt_strrtclr"
+        android:textStyle="bold"
+        android:textSize="@dimen/response_header_txtsz"
+        android:layout_marginLeft="@dimen/response_header_all_mrgn"
+        />
+
+    <ImageView
+        android:id="@+id/response_txt_imgvw"
+        android:layout_width="@dimen/response_imgvw_width"
+        android:layout_height="@dimen/response_imgvw_width"
+        android:background="@drawable/textvw_blue"
+        android:layout_centerVertical="true"
+        android:layout_alignParentRight="true"
+        android:layout_marginRight="@dimen/response_header_all_mrgn"/>
+
+</RelativeLayout>
+
+</LinearLayout>

@@ -8,6 +8,7 @@ import android.content.Intent;
 import android.graphics.Typeface;
 import android.os.Bundle;
 import android.os.CountDownTimer;
+import android.os.SystemClock;
 import android.speech.RecognitionListener;
 import android.speech.RecognizerIntent;
 import android.speech.SpeechRecognizer;
@@ -20,15 +21,19 @@ import android.view.Window;
 import android.view.WindowManager;
 import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
+import android.view.animation.RotateAnimation;
 import android.widget.AnalogClock;
+import android.widget.Chronometer;
 import android.widget.DigitalClock;
 import android.widget.ImageButton;
+import android.widget.ProgressBar;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import com.app.jlmd.animatedcircleloadingview.sample.R;
 import com.github.jlmd.animatedcircleloadingview.sample.ACTIVITY.APP_UTILS.BYTECH_APP_CONSTANT;
+import com.github.rahatarmanahmed.cpv.CircularProgressView;
 import com.jpardogo.android.googleprogressbar.library.GoogleProgressBar;
 import com.pixplicity.easyprefs.library.Prefs;
 //import com.acapelagroup.android.tts.acattsandroid;
@@ -63,6 +68,7 @@ public class HP_PA_HOME extends Activity implements RecognitionListener , TextTo
     private final long interval = 1 * 1000;
     private CountDownTimer countDownTimer;
     private boolean timerHasStarted = false;
+    CircularProgressView progressView;
 
 
     @Override
@@ -110,11 +116,6 @@ public class HP_PA_HOME extends Activity implements RecognitionListener , TextTo
         mProgressBar = (GoogleProgressBar) findViewById(R.id.google_progress);
         footer_marque_txt = (TextView) findViewById(R.id.footer_marque_txt);
 
-        AnalogClock analog = (AnalogClock) findViewById(R.id.analog_clock);
-        //analog clock
-        DigitalClock digital = (DigitalClock) findViewById(R.id.digital_clock);
-        //digital clock
-
     }
 
     public void hppa_set_widget_fonts() {
@@ -135,27 +136,6 @@ public class HP_PA_HOME extends Activity implements RecognitionListener , TextTo
             @Override
             public void onClick(View view) {
 
-                // custom dialog
-                Dialog dialog = new Dialog(context, android.R.style.Theme_Translucent_NoTitleBar_Fullscreen);
-                dialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
-                dialog.setContentView(R.layout.timer_page);
-                Window window = dialog.getWindow();
-                WindowManager.LayoutParams wlp = window.getAttributes();
-                wlp.gravity = Gravity.CENTER;
-                wlp.flags &= ~WindowManager.LayoutParams.FLAG_BLUR_BEHIND;
-                window.setAttributes(wlp);
-                dialog.getWindow().setLayout(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT);
-                dialog.show();
-                timer_txtvw = (TextView) dialog.findViewById(R.id.countdown_timer);
-                countDownTimer = new MyCountDownTimer(startTime, interval);
-                timer_txtvw.setText(timer_txtvw.getText() + String.valueOf(startTime / 1000));
-                if (!timerHasStarted) {
-                    countDownTimer.start();
-                    timerHasStarted = true;
-                } else {
-                    countDownTimer.cancel();
-                    timerHasStarted = false;
-                }
                 view.startAnimation(animScale);
                 speech.startListening(recognizerIntent);
                 home_speech_imgbtn.setClickable(false);
@@ -178,6 +158,7 @@ public class HP_PA_HOME extends Activity implements RecognitionListener , TextTo
 
         public void onFinish() {
             timer_txtvw.setText("Time's up!");
+            progressView.setVisibility(View.GONE);
         }
 
         @Override
@@ -229,7 +210,7 @@ public class HP_PA_HOME extends Activity implements RecognitionListener , TextTo
         Log.d(LOG_TAG, "FAILED " + errorMessage);
         home_speech_txtvw.setText(errorMessage);
         speakOut(errorMessage + " please tab and speak again");
-        pre_validated_text="";
+//        pre_validated_text="";
         //toggleButton.setChecked(false);
         home_speech_imgbtn.setClickable(true);
         mProgressBar.setVisibility(View.GONE);
@@ -369,6 +350,31 @@ public class HP_PA_HOME extends Activity implements RecognitionListener , TextTo
          {
              speakOut("please wait!! while we process your question");
              footer_marque_txt.setText("");
+             // custom dialog
+             Dialog dialog = new Dialog(context, android.R.style.Theme_Translucent_NoTitleBar_Fullscreen);
+             dialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
+             dialog.setContentView(R.layout.timer_page);
+             Window window = dialog.getWindow();
+             WindowManager.LayoutParams wlp = window.getAttributes();
+             wlp.gravity = Gravity.CENTER;
+             wlp.flags &= ~WindowManager.LayoutParams.FLAG_BLUR_BEHIND;
+             window.setAttributes(wlp);
+             dialog.getWindow().setLayout(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT);
+             dialog.show();
+             timer_txtvw = (TextView) dialog.findViewById(R.id.countdown_timer);
+             progressView = (CircularProgressView) dialog.findViewById(R.id.progress_view);
+             countDownTimer = new MyCountDownTimer(startTime, interval);
+             timer_txtvw.setText(timer_txtvw.getText() + String.valueOf(startTime / 1000));
+             if (!timerHasStarted) {
+                 countDownTimer.start();
+                 progressView.startAnimation();
+                 timerHasStarted = true;
+             } else {
+                 countDownTimer.cancel();
+                 progressView.clearAnimation();
+                 timerHasStarted = false;
+             }
+
 
          }else
          {

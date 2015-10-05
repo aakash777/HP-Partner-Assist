@@ -9,6 +9,7 @@
   <dimen name="googleprogress_bar_width">60dp</dimen>
   <dimen name="bytech_footer_margin">10dp</dimen>
   <dimen name="bytech_footer_txtsz">12sp</dimen>
+  <dimen name="bytech_footer_padding">20dp</dimen>
   <dimen name="bytech_footer_marque_txtsz">16sp</dimen>
   <dimen name="app_toolbar_padding_right">10dp</dimen>
   <dimen name="app_toolbar_padding_left">5dp</dimen>
@@ -30,5 +31,13 @@
   <dimen name="home_footer_marque_margin">5dp</dimen>
   <dimen name="home_speech_textsize">24sp</dimen>
 
+  <!-- Response Page-->
+  <dimen name="response_header_all_mrgn">10dp</dimen>
+  <dimen name="response_txtvw_mrgn">20dp</dimen>
+  <dimen name="response_header_rl_mrgn">2dp</dimen>
+  <dimen name="response_imgvw_width">28dp</dimen>
+  <dimen name="response_header_txtsz">12sp</dimen>
+  <dimen name="response_title_txtsz">34sp</dimen>
+  <dimen name="response_count_txtsz">38sp</dimen>
 
 </resources>

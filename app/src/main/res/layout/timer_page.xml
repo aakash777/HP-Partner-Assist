@@ -6,34 +6,31 @@
     >
 
     <!-- Analog Clock -->
-    <AnalogClock
+    <DigitalClock
         android:id="@+id/analog_clock"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_centerHorizontal="true"
-        android:layout_centerVertical="true"
+        android:layout_above="@+id/progress_view"
         />
 
-    <!-- Digital Clock -->
-    <DigitalClock
-        android:id="@+id/digital_clock"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_centerHorizontal="true"
-        android:layout_above="@+id/analog_clock"
-        android:textStyle="bold"
-        android:layout_margin="20dp"
-        android:textSize="26sp"
-        android:textColor="#ffffff"/>
+    <com.github.rahatarmanahmed.cpv.CircularProgressView
+        xmlns:app="http://schemas.android.com/apk/res-auto"
+        android:id="@+id/progress_view"
+        android:layout_width="140dp"
+        android:layout_height="140dp"
+        app:cpv_animAutostart="true"
+        app:cpv_indeterminate="true"
+        app:cpv_thickness="30px"
+        app:cpv_animDuration="3000"
+        android:layout_centerInParent="true"/>
 
     <TextView
         android:id="@+id/countdown_timer"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_centerHorizontal="true"
-        android:layout_below="@+id/analog_clock"
+        android:layout_centerInParent="true"
         android:textStyle="bold"
-        android:layout_marginTop="40dp"
         android:textSize="30sp"
         android:textColor="#ffffff"
         android:text="30"

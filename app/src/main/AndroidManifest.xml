@@ -35,6 +35,14 @@
             android:name="com.github.jlmd.animatedcircleloadingview.sample.ACTIVITY.HP_PA_HOME"
             android:label="@string/app_name"></activity>
 
+        <activity
+            android:name="com.github.jlmd.animatedcircleloadingview.sample.ACTIVITY.HP_PA_RESPONSETEXT"
+            android:label="@string/app_name"></activity>
+
+        <activity
+            android:name="com.github.jlmd.animatedcircleloadingview.sample.ACTIVITY.HP_PA_RESPONSEGRID"
+            android:label="@string/app_name"></activity>
+
     </application>
 
 

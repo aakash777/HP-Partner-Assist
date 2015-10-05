@@ -9,7 +9,11 @@
   <string name="signin_login_txt">LOGIN</string>
   <string name="signin_forgot_txt">Forgot Password ?</string>
   <string name="signin_foter_txt">Powered by Bytech</string>
-
+  ---------------------------------------------------------------
   <string name="home_speech_txt">Tab the button to speak</string>
+  ---------------------------------------------------------------
+  <string name="response_graphvw_txt">GRAPH VIEW</string>
+  <string name="response_gridvw_txt">GRID VIEW</string>
+  <string name="response_txtvw_txt">TEXT VIEW</string>
 
 </resources>

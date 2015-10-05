@@ -81,7 +81,8 @@
         layout="@layout/hp_pa_footer"
         android:layout_width="match_parent"
         android:layout_height="0dp"
-        android:layout_weight="10"></include>
+        android:layout_weight="10"
+        ></include>
     </LinearLayout>
 
 </RelativeLayout>

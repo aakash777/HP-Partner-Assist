@@ -1,0 +1,55 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="vertical"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:background="@drawable/response_white_brdr"
+    android:paddingLeft="@dimen/bytech_footer_padding"
+    android:paddingRight="@dimen/bytech_footer_padding">
+
+    <TextView
+        android:id="@+id/footer_powered_txt"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_centerHorizontal="true"
+        android:layout_alignParentBottom="true"
+        android:text="@string/signin_foter_txt"
+        android:textColor="@color/splash_grdnt_mdlclr"
+        android:textSize="@dimen/bytech_footer_txtsz"
+        android:layout_marginBottom="@dimen/bytech_footer_margin"
+        />
+
+    <TextView
+        android:id="@+id/footer_response_txt"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:singleLine="true"
+        android:layout_above="@+id/footer_powered_txt"
+        android:layout_marginBottom="@dimen/home_footer_marque_margin"
+        android:layout_centerHorizontal="true"
+        android:text="voice command"
+        android:textColor="@color/home_grey_txtclr"
+        android:textSize="@dimen/bytech_footer_marque_txtsz"
+        android:textStyle="bold"
+        />
+
+    <ImageView
+    android:layout_width="match_parent"
+    android:layout_height="35dp"
+    android:layout_above="@+id/footer_powered_txt"
+    android:layout_centerHorizontal="true"
+    android:background="@drawable/chatbox"
+    android:layout_marginRight="10dp"
+    android:layout_marginLeft="10dp"
+    />
+
+    <ImageView
+        android:id="@+id/response_speak_btn"
+        android:layout_width="@dimen/response_imgvw_width"
+        android:layout_height="@dimen/response_imgvw_width"
+        android:layout_alignParentRight="true"
+        android:background="@drawable/speak_pic"
+        android:layout_centerVertical="true"
+        />
+
+</RelativeLayout>
