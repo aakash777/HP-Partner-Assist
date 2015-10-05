@@ -1,8 +1,12 @@
 package com.github.jlmd.animatedcircleloadingview.sample.ACTIVITY;
 
 import android.app.Activity;
+import android.content.Intent;
 import android.graphics.Typeface;
 import android.os.Bundle;
+import android.view.View;
+import android.view.animation.Animation;
+import android.view.animation.AnimationUtils;
 import android.widget.ImageView;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
@@ -19,7 +23,8 @@ public class HP_PA_RESPONSEGRAPH extends Activity{
             , footer_response_txt , footer_powered_txt;
     RelativeLayout response_header_gridvw_rl,response_header_txtvw_rl ,
             response_header_graphvw_rl;
-    ImageView response_txt_imgvw,response_graph_imgvw,response_grid_imgvw;
+    ImageView response_txt_imgvw,response_graph_imgvw,response_grid_imgvw,response_speak_btn;
+    Animation animScale;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -29,16 +34,54 @@ public class HP_PA_RESPONSEGRAPH extends Activity{
         hppa_dcl_layout();
         //layout reference
         hppa_dcl_layout_variables();
+        //setting the animation
+        animScale = AnimationUtils.loadAnimation(this, R.anim.anim_scale);
         //widget fonts
         hppa_set_widget_fonts();
-        response_header_gridvw_rl.setBackgroundResource(R.drawable.response_blue_brdr);
-        response_txtvw_txtvw.setTextColor(getResources().getColor(R.color.app_white));
-        response_txt_imgvw.setBackgroundResource(R.drawable.textvw);
+        response_header_graphvw_rl.setBackgroundResource(R.drawable.response_blue_brdr);
+        response_graphvw_txtvw.setTextColor(getResources().getColor(R.color.app_white));
+        response_graph_imgvw.setBackgroundResource(R.drawable.line_chart_white);
+
+        response_header_txtvw_rl.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+
+                Intent grid = new Intent(getApplicationContext(), HP_PA_RESPONSETEXT.class);
+                startActivity(grid);
+                finish();
+
+            }
+        });
+
+        response_header_gridvw_rl.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+
+                Intent graph = new Intent(getApplicationContext(), HP_PA_RESPONSEGRID.class);
+                startActivity(graph);
+                finish();
+
+            }
+        });
     }//oncreate ends here
+
+    @Override
+    public void onResume() {
+        super.onResume();
+
+        response_speak_btn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+
+                view.startAnimation(animScale);
+            }
+        });
+
+    }
 
     public void hppa_dcl_layout() {
 
-        setContentView(R.layout.hp_pa_responsegrid);
+        setContentView(R.layout.hp_pa_responsegraph);
 
     }
     public void hppa_dcl_layout_variables() {
@@ -54,6 +97,7 @@ public class HP_PA_RESPONSEGRAPH extends Activity{
         response_txt_imgvw = (ImageView) findViewById(R.id.response_txt_imgvw);
         response_graph_imgvw = (ImageView) findViewById(R.id.response_graph_imgvw);
         response_grid_imgvw = (ImageView) findViewById(R.id.response_grid_imgvw);
+        response_speak_btn = (ImageView) findViewById(R.id.response_speak_btn);
     }
 
     public void hppa_set_widget_fonts() {

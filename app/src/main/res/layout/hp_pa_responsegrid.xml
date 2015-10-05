@@ -19,6 +19,7 @@
         <include
             layout="@layout/hp_pa_response_header"
             android:layout_width="match_parent"
+            android:layout_marginTop="@dimen/response_header_rl_mrgn"
             android:layout_height="0dp"
             android:layout_weight="10"
             ></include>

@@ -119,7 +119,6 @@ public class HP_PA_SPLASH extends Activity {
                         changePercent(i);
                     }
 
-
                 } catch (InterruptedException e) {
 
 
@@ -134,7 +133,6 @@ public class HP_PA_SPLASH extends Activity {
                     }
                     if(Prefs.getString(BYTECH_APP_CONSTANT.shared_partner_id, "").equals(""))
                     {
-
                         Intent splshint = new Intent(HP_PA_SPLASH.this, HP_PA_SIGNIN.class);
                         startActivity(splshint);
                         finish();
@@ -145,7 +143,6 @@ public class HP_PA_SPLASH extends Activity {
                         finish();
                     }
                 }
-
             }
 
 
@@ -168,7 +165,6 @@ public class HP_PA_SPLASH extends Activity {
 
             }
         });
-
 
     }
 

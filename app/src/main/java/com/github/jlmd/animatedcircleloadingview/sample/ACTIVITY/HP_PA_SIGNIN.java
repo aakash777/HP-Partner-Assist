@@ -91,7 +91,6 @@ public class HP_PA_SIGNIN extends Activity {
             }
         });
 
-
     }
 
     //oncreate ends here
@@ -208,8 +207,16 @@ public class HP_PA_SIGNIN extends Activity {
                 Intent goToHomePage = new Intent(HP_PA_SIGNIN.this, HP_PA_HOME.class);
                 goToHomePage.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
                 startActivity(goToHomePage);
+                finish();
 
-            } else {
+            }else if((get_prtnrid_edittxt.equals("mj99"))&&(get_password_edittxt.equals("pa124")))
+            {
+                Intent goToHomePage = new Intent(HP_PA_SIGNIN.this, HP_PA_HOME.class);
+                goToHomePage.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+                startActivity(goToHomePage);
+                finish();
+            }
+            else {
 
                 Toast.makeText(HP_PA_SIGNIN.this, "Please Enter Valid Credential.", Toast.LENGTH_LONG).show();
             }

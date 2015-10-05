@@ -3,9 +3,8 @@
     android:orientation="vertical"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:background="@drawable/response_white_brdr"
-    android:paddingLeft="@dimen/bytech_footer_padding"
-    android:paddingRight="@dimen/bytech_footer_padding">
+    android:background="@color/app_white"
+    >
 
     <TextView
         android:id="@+id/footer_powered_txt"
@@ -34,13 +33,14 @@
         />
 
     <ImageView
+    android:id="@+id/response_txtbox_imgvw"
     android:layout_width="match_parent"
     android:layout_height="35dp"
     android:layout_above="@+id/footer_powered_txt"
     android:layout_centerHorizontal="true"
     android:background="@drawable/chatbox"
-    android:layout_marginRight="10dp"
-    android:layout_marginLeft="10dp"
+    android:layout_marginRight="45dp"
+    android:layout_marginLeft="20dp"
     />
 
     <ImageView
@@ -49,7 +49,7 @@
         android:layout_height="@dimen/response_imgvw_width"
         android:layout_alignParentRight="true"
         android:background="@drawable/speak_pic"
-        android:layout_centerVertical="true"
-        />
+        android:layout_alignTop="@+id/response_txtbox_imgvw"
+        android:layout_marginRight="5dp"/>
 
 </RelativeLayout>
