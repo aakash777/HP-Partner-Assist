@@ -41,4 +41,5 @@ dependencies {
     compile 'com.pixplicity.easyprefs:library:1.7'
     compile 'com.jpardogo.googleprogressbar:library:1.2.0'
     compile 'com.github.rahatarmanahmed:circularprogressview:2.4.0'
+    compile 'net.simonvt.menudrawer:menudrawer:3.0.6'
 }

@@ -74,7 +74,7 @@ public class HP_PA_HOME extends Activity implements RecognitionListener , TextTo
     int entityflag;
     int wh_qstn_flg;
     int non_english_flag;
-    String pre_validated_text;
+    String pre_validated_text,pre_validated_text_replaceSpace;
     final Context context = this;
     private final long startTime = 30 * 1000;
     private final long interval = 1 * 1000;
@@ -84,6 +84,7 @@ public class HP_PA_HOME extends Activity implements RecognitionListener , TextTo
     private BYTECH_CONNECTION_DETECTOR cd;
     private Boolean isInternetPresent = false;
     String URL = "http://bytechdemo.com/spa/api/secap?text=";
+    String product,event,date;
     Dialog dialog;
 //    int speech_listner_flag;
 
@@ -100,7 +101,6 @@ public class HP_PA_HOME extends Activity implements RecognitionListener , TextTo
         hppa_dcl_layout();
         //setting the animation
         animScale = AnimationUtils.loadAnimation(this,R.anim.anim_scale);
-        animalpha = AnimationUtils.loadAnimation(this,R.anim.anim_alpha);
         //layout reference
         hppa_dcl_layout_variables();
         //widget fonts
@@ -173,8 +173,9 @@ public class HP_PA_HOME extends Activity implements RecognitionListener , TextTo
                 // check for Internet status
                 if (isInternetPresent) {
                     pre_validated_text = "how many Laptop Purchase Today";
-                    System.out.println("pre executed url"+URL+pre_validated_text);
-                    new GetParameterFromAPIAI().execute(URL + pre_validated_text);
+                    pre_validated_text_replaceSpace = pre_validated_text.replaceAll(" ", "%20");
+                    System.out.println("pre executed url"+URL+pre_validated_text_replaceSpace);
+                    new GetParameterFromAPIAI().execute(URL + pre_validated_text_replaceSpace);
                     } else {
                     // Internet connection is not present
                     // Ask user to connect to Internet
@@ -193,9 +194,9 @@ public class HP_PA_HOME extends Activity implements RecognitionListener , TextTo
 
         @Override
         public void onFinish() {
-            speakOut("Dear "+"\n"+Prefs.getString(BYTECH_APP_CONSTANT.shared_partner_name, "")
-                    +"\n"+" your query is taking longer then the usual."+"\n"+"If you Still Wish " +
-                    "to wait please say continue "+"\n"+"otherwise say Cancel to Try with new Question.");
+            speakOut("Dear " + "\n" + Prefs.getString(BYTECH_APP_CONSTANT.shared_partner_name, "")
+                    + "\n" + " your query is taking longer then the usual." + "\n" + "If you Still Wish " +
+                    "to wait please say continue " + "\n" + "otherwise say Cancel to Try with new Question.");
 
             timer_txtvw.setText("Time's up!");
             progressView.setVisibility(View.GONE);
@@ -379,8 +380,8 @@ public class HP_PA_HOME extends Activity implements RecognitionListener , TextTo
     private void prevalidating_sentence(String sentence)
     {
 
-     entityflag = 0;
-     wh_qstn_flg = 0;
+        entityflag = 0;
+        wh_qstn_flg = 0;
      System.out.println("spoken word"+sentence);
         Toast.makeText(getApplicationContext(),
                 "you spoke :- "+sentence ,Toast.LENGTH_SHORT).show();
@@ -392,7 +393,31 @@ public class HP_PA_HOME extends Activity implements RecognitionListener , TextTo
          {
              speakOut("please wait!! while we process your question");
              footer_marque_txt.setText("");
-            //call the asynctask
+             // custom dialog
+             Dialog dialog = new Dialog(context, android.R.style.Theme_Translucent_NoTitleBar_Fullscreen);
+             dialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
+             dialog.setContentView(R.layout.timer_page);
+             Window window = dialog.getWindow();
+             WindowManager.LayoutParams wlp = window.getAttributes();
+             wlp.gravity = Gravity.CENTER;
+             wlp.flags &= ~WindowManager.LayoutParams.FLAG_BLUR_BEHIND;
+             window.setAttributes(wlp);
+             dialog.getWindow().setLayout(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT);
+             dialog.show();
+             timer_txtvw = (TextView) dialog.findViewById(R.id.countdown_timer);
+             progressView = (CircularProgressView) dialog.findViewById(R.id.progress_view);
+             countDownTimer = new MyCountDownTimer(startTime, interval);
+             timer_txtvw.setText(timer_txtvw.getText() + String.valueOf(startTime / 1000));
+             if (!timerHasStarted) {
+                 countDownTimer.start();
+                 progressView.startAnimation();
+                 timerHasStarted = true;
+             } else {
+                 countDownTimer.cancel();
+                 progressView.clearAnimation();
+                 timerHasStarted = false;
+             }
+
 
          }else
          {
@@ -417,12 +442,7 @@ public class HP_PA_HOME extends Activity implements RecognitionListener , TextTo
 
 
          }
-         else if(!pre_validated_text.equals("")) {
-             speakOut("Sorry!!"+"we did not found a valid command."+
-                             "Please tab and say go or proceed to process your question"
-                     + "\n" + "and cancel to ask another");
-         }
-        else {
+         else {
          spoken_user_words = sentence.trim().split("\\s+");
          if (spoken_user_words.length <= 10) {
              System.out.println("word length " + spoken_user_words.length);
@@ -603,36 +623,45 @@ public class HP_PA_HOME extends Activity implements RecognitionListener , TextTo
             return null;
         }
 
-        protected void onPostExecute(String result) {
+        protected void onPostExecute(String getResult) {
 
-            super.onPostExecute(result);
+            super.onPostExecute(getResult);
             dialog.dismiss();
-            System.out.println("my json object:" + result);
-            JSONArray myListsAll = null;
+
+
+            JSONObject jObject = null;
             try {
-                myListsAll = new JSONArray(result);
+                jObject = new JSONObject(getResult);
             } catch (JSONException e) {
                 e.printStackTrace();
             }
-            System.out.println("json array"+myListsAll);
-//
-//            JSONObject jsonobject = null;
-//            try {
-//                jsonobject = (JSONObject) myListsAll.get(0);
-//            } catch (JSONException e) {
-//                e.printStackTrace();
-//            }
-//            System.out.println("my json object:"+ jsonobject);
-//            partner_id = jsonobject.optString("PARTNER_ID");
-//            partner_name = jsonobject.optString("PARTNER_NAME");
-//            partner_region = jsonobject.optString("REGION");
-//            partner_state = jsonobject.optString("STATE");
-//            validate_authentic_user = jsonobject.optString("msg");
-//            Log.e("partner_name",partner_name);
-//            Log.e("partner_region",partner_region);
-//            Log.e("validate_authentic_user",validate_authentic_user);
+            JSONObject offerObject = null;
+            try {
+                offerObject = jObject.getJSONObject("result");
+            } catch (JSONException e) {
+                // TODO Auto-generated catch block
+                e.printStackTrace();
+            }
 
+            JSONObject businessObject = null;
+            try {
+                businessObject = offerObject.getJSONObject("parameters");
+            } catch (JSONException e) {
 
+                e.printStackTrace();
+            }
+
+            try {
+                product = businessObject.getString("Product");
+                System.out.println(product);
+                event = businessObject.getString("Event");
+                System.out.println(event);
+                date = businessObject.getString("date");
+                System.out.println(date);
+            } catch (JSONException e) {
+                // TODO Auto-generated catch block
+                e.printStackTrace();
+            }
 
 
         }
