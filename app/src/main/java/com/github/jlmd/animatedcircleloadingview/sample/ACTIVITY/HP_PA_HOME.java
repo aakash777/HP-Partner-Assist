@@ -3,9 +3,11 @@ package com.github.jlmd.animatedcircleloadingview.sample.ACTIVITY;
 
 import android.app.Activity;
 import android.app.Dialog;
+import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.Typeface;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.CountDownTimer;
 import android.os.SystemClock;
@@ -23,9 +25,8 @@ import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
 import android.view.animation.RotateAnimation;
 import android.widget.AnalogClock;
-import android.widget.Chronometer;
-import android.widget.DigitalClock;
 import android.widget.ImageButton;
+import android.widget.ImageView;
 import android.widget.ProgressBar;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
@@ -33,10 +34,20 @@ import android.widget.Toast;
 
 import com.app.jlmd.animatedcircleloadingview.sample.R;
 import com.github.jlmd.animatedcircleloadingview.sample.ACTIVITY.APP_UTILS.BYTECH_APP_CONSTANT;
+import com.github.jlmd.animatedcircleloadingview.sample.ACTIVITY.MAIN_APPLICATION.BYTECH_CONNECTION_DETECTOR;
 import com.github.rahatarmanahmed.cpv.CircularProgressView;
 import com.jpardogo.android.googleprogressbar.library.GoogleProgressBar;
 import com.pixplicity.easyprefs.library.Prefs;
 //import com.acapelagroup.android.tts.acattsandroid;
+import org.apache.http.client.HttpClient;
+import org.apache.http.client.ResponseHandler;
+import org.apache.http.client.methods.HttpGet;
+import org.apache.http.impl.client.BasicResponseHandler;
+import org.apache.http.impl.client.DefaultHttpClient;
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
+
 import java.util.ArrayList;
 import java.util.Locale;
 
@@ -48,6 +59,7 @@ public class HP_PA_HOME extends Activity implements RecognitionListener , TextTo
 
     ImageButton home_speech_imgbtn;
     TextView home_speech_txtvw,home_powered_txt,footer_marque_txt,timer_txtvw;
+//    ImageView timer_speak_btn;
     Typeface typeFace;
     private SpeechRecognizer speech = null;
     private Intent recognizerIntent;
@@ -55,8 +67,8 @@ public class HP_PA_HOME extends Activity implements RecognitionListener , TextTo
 //  private AnimatedCircleLoadingView animatedCircleLoadingView;
     private TextToSpeech tts;
     String globaltext;
-    Animation animScale;
-    GoogleProgressBar mProgressBar;
+    Animation animScale,animalpha;
+    GoogleProgressBar mProgressBar,tprogressBar;
     String tempresult;
     String spoken_user_words[];
     int entityflag;
@@ -69,6 +81,11 @@ public class HP_PA_HOME extends Activity implements RecognitionListener , TextTo
     private CountDownTimer countDownTimer;
     private boolean timerHasStarted = false;
     CircularProgressView progressView;
+    private BYTECH_CONNECTION_DETECTOR cd;
+    private Boolean isInternetPresent = false;
+    String URL = "http://bytechdemo.com/spa/api/secap?text=";
+    Dialog dialog;
+//    int speech_listner_flag;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -83,10 +100,13 @@ public class HP_PA_HOME extends Activity implements RecognitionListener , TextTo
         hppa_dcl_layout();
         //setting the animation
         animScale = AnimationUtils.loadAnimation(this,R.anim.anim_scale);
+        animalpha = AnimationUtils.loadAnimation(this,R.anim.anim_alpha);
         //layout reference
         hppa_dcl_layout_variables();
         //widget fonts
         hppa_set_widget_fonts();
+        // Make Conncetion Class Object
+        cd = new BYTECH_CONNECTION_DETECTOR(getApplicationContext());
 
         //configure speech recognizer
         speech = SpeechRecognizer.createSpeechRecognizer(this);
@@ -140,31 +160,49 @@ public class HP_PA_HOME extends Activity implements RecognitionListener , TextTo
                 home_speech_imgbtn.setClickable(false);
                 mProgressBar.setVisibility(View.VISIBLE);
 
+
             }
         });
 
+        home_powered_txt.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+
+                //check the internet connection
+                isInternetPresent = cd.isConnectingToInternet();
+                // check for Internet status
+                if (isInternetPresent) {
+                    pre_validated_text = "how many Laptop Purchase Today";
+                    System.out.println("pre executed url"+URL+pre_validated_text);
+                    new GetParameterFromAPIAI().execute(URL + pre_validated_text);
+                    } else {
+                    // Internet connection is not present
+                    // Ask user to connect to Internet
+                    speakOut("please check your internet connection"+"\n"+ "then try to proceed");
+                }
+
+            }
+        });
     }
 
     public class MyCountDownTimer extends CountDownTimer {
 
         public MyCountDownTimer(long startTime, long interval) {
-
             super(startTime, interval);
-
         }
 
         @Override
-
         public void onFinish() {
+            speakOut("Dear "+"\n"+Prefs.getString(BYTECH_APP_CONSTANT.shared_partner_name, "")
+                    +"\n"+" your query is taking longer then the usual."+"\n"+"If you Still Wish " +
+                    "to wait please say continue "+"\n"+"otherwise say Cancel to Try with new Question.");
+
             timer_txtvw.setText("Time's up!");
             progressView.setVisibility(View.GONE);
-            Prefs.putBoolean(BYTECH_APP_CONSTANT.shared_response_flag, true);
-            Intent go_to_response = new Intent(getApplicationContext(), HP_PA_RESPONSEGRAPH.class);
-            startActivity(go_to_response);
+
         }
 
         @Override
-
         public void onTick(long millisUntilFinished) {
 
             timer_txtvw.setText("" + millisUntilFinished / 1000);
@@ -201,8 +239,7 @@ public class HP_PA_HOME extends Activity implements RecognitionListener , TextTo
     @Override
     public void onEndOfSpeech() {
         Log.i(LOG_TAG, "onEndOfSpeech");
-        //  progressBar.setIndeterminate(true);
-        //   toggleButton.setChecked(false);
+
         home_speech_txtvw.setText("please wait");
     }
 
@@ -210,12 +247,16 @@ public class HP_PA_HOME extends Activity implements RecognitionListener , TextTo
     public void onError(int errorCode) {
         String errorMessage = getErrorText(errorCode);
         Log.d(LOG_TAG, "FAILED " + errorMessage);
-        home_speech_txtvw.setText(errorMessage);
-        speakOut(errorMessage + " please tab and speak again");
+
+
+            home_speech_txtvw.setText(errorMessage);
+            speakOut(errorMessage + " please tab and speak again");
 //        pre_validated_text="";
-        //toggleButton.setChecked(false);
-        home_speech_imgbtn.setClickable(true);
-        mProgressBar.setVisibility(View.GONE);
+            //toggleButton.setChecked(false);
+            home_speech_imgbtn.setClickable(true);
+            mProgressBar.setVisibility(View.GONE);
+
+
 
     }
 
@@ -247,11 +288,12 @@ public class HP_PA_HOME extends Activity implements RecognitionListener , TextTo
         String text = "";
         for (String result : matches)
             text += result + "\n";
-        tempresult = matches.get(0);
-        home_speech_txtvw.setText("tab to speak");
-        home_speech_imgbtn.setClickable(true);
-        mProgressBar.setVisibility(View.GONE);
-        prevalidating_sentence(tempresult);
+            tempresult = matches.get(0);
+
+            home_speech_txtvw.setText("tab to speak");
+            home_speech_imgbtn.setClickable(true);
+            mProgressBar.setVisibility(View.GONE);
+            prevalidating_sentence(tempresult);
 
     }
 
@@ -298,7 +340,6 @@ public class HP_PA_HOME extends Activity implements RecognitionListener , TextTo
         return message;
     }
 
-
     @Override
     public void onInit(int status) {
 
@@ -307,10 +348,9 @@ public class HP_PA_HOME extends Activity implements RecognitionListener , TextTo
         if (status == TextToSpeech.SUCCESS) {
 
             int result = tts.setLanguage(Locale.ENGLISH);
-
-            tts.setSpeechRate((float) 1.1);
+            tts.setSpeechRate((float) 1.3);
             System.out.println("tts init status if" + status);
-            tts.setPitch((float) 1.0); // set pitch level
+            tts.setPitch((float) 1.225); // set pitch level
 
             // tts.setSpeechRate(2); // set speech speed rate
             System.out.println("languge status out"+result);
@@ -339,8 +379,8 @@ public class HP_PA_HOME extends Activity implements RecognitionListener , TextTo
     private void prevalidating_sentence(String sentence)
     {
 
-        entityflag = 0;
-        wh_qstn_flg = 0;
+     entityflag = 0;
+     wh_qstn_flg = 0;
      System.out.println("spoken word"+sentence);
         Toast.makeText(getApplicationContext(),
                 "you spoke :- "+sentence ,Toast.LENGTH_SHORT).show();
@@ -352,31 +392,7 @@ public class HP_PA_HOME extends Activity implements RecognitionListener , TextTo
          {
              speakOut("please wait!! while we process your question");
              footer_marque_txt.setText("");
-             // custom dialog
-             Dialog dialog = new Dialog(context, android.R.style.Theme_Translucent_NoTitleBar_Fullscreen);
-             dialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
-             dialog.setContentView(R.layout.timer_page);
-             Window window = dialog.getWindow();
-             WindowManager.LayoutParams wlp = window.getAttributes();
-             wlp.gravity = Gravity.CENTER;
-             wlp.flags &= ~WindowManager.LayoutParams.FLAG_BLUR_BEHIND;
-             window.setAttributes(wlp);
-             dialog.getWindow().setLayout(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT);
-             dialog.show();
-             timer_txtvw = (TextView) dialog.findViewById(R.id.countdown_timer);
-             progressView = (CircularProgressView) dialog.findViewById(R.id.progress_view);
-             countDownTimer = new MyCountDownTimer(startTime, interval);
-             timer_txtvw.setText(timer_txtvw.getText() + String.valueOf(startTime / 1000));
-             if (!timerHasStarted) {
-                 countDownTimer.start();
-                 progressView.startAnimation();
-                 timerHasStarted = true;
-             } else {
-                 countDownTimer.cancel();
-                 progressView.clearAnimation();
-                 timerHasStarted = false;
-             }
-
+            //call the asynctask
 
          }else
          {
@@ -401,7 +417,12 @@ public class HP_PA_HOME extends Activity implements RecognitionListener , TextTo
 
 
          }
-         else {
+         else if(!pre_validated_text.equals("")) {
+             speakOut("Sorry!!"+"we did not found a valid command."+
+                             "Please tab and say go or proceed to process your question"
+                     + "\n" + "and cancel to ask another");
+         }
+        else {
          spoken_user_words = sentence.trim().split("\\s+");
          if (spoken_user_words.length <= 10) {
              System.out.println("word length " + spoken_user_words.length);
@@ -529,4 +550,95 @@ public class HP_PA_HOME extends Activity implements RecognitionListener , TextTo
          }
      }
     }
+
+    private class GetParameterFromAPIAI extends AsyncTask<String, Void, String> {
+
+        protected void onPreExecute() {
+            super.onPreExecute();
+            //call the timer dailog
+            dialog = new Dialog(context, android.R.style.Theme_Translucent_NoTitleBar_Fullscreen);
+            dialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
+            dialog.setContentView(R.layout.timer_page);
+            Window window = dialog.getWindow();
+            WindowManager.LayoutParams wlp = window.getAttributes();
+            wlp.gravity = Gravity.CENTER;
+            wlp.flags &= ~WindowManager.LayoutParams.FLAG_BLUR_BEHIND;
+            window.setAttributes(wlp);
+            dialog.getWindow().setLayout(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT);
+            dialog.show();
+            timer_txtvw = (TextView) dialog.findViewById(R.id.countdown_timer);
+//             timer_speak_btn = (ImageView) dialog.findViewById(R.id.timer_speak_btn);
+            progressView = (CircularProgressView) dialog.findViewById(R.id.progress_view);
+//             tprogressBar = (GoogleProgressBar) dialog.findViewById(R.id.timer_google_progress);
+            countDownTimer = new MyCountDownTimer(startTime, interval);
+            timer_txtvw.setText(timer_txtvw.getText() + String.valueOf(startTime / 1000));
+            if (!timerHasStarted) {
+                countDownTimer.start();
+                progressView.startAnimation();
+                timerHasStarted = true;
+
+            } else {
+                countDownTimer.cancel();
+                progressView.clearAnimation();
+                timerHasStarted = false;
+            }
+        }
+
+        @Override
+        protected String doInBackground(String... URL) {
+
+            HttpClient Client = new DefaultHttpClient();
+            System.out.println("my json url1" + URL);
+            try {
+                String SetServerString = "";
+                HttpGet httpget = new HttpGet(URL[0]);
+                System.out.println("my json url" + URL[0]);
+                ResponseHandler<String> responseHandler = new BasicResponseHandler();
+                SetServerString = Client.execute(httpget, responseHandler);
+
+                return SetServerString;
+
+            } catch (Exception e) {
+            }
+            return null;
+        }
+
+        protected void onPostExecute(String result) {
+
+            super.onPostExecute(result);
+            dialog.dismiss();
+            System.out.println("my json object:" + result);
+            JSONArray myListsAll = null;
+            try {
+                myListsAll = new JSONArray(result);
+            } catch (JSONException e) {
+                e.printStackTrace();
+            }
+            System.out.println("json array"+myListsAll);
+//
+//            JSONObject jsonobject = null;
+//            try {
+//                jsonobject = (JSONObject) myListsAll.get(0);
+//            } catch (JSONException e) {
+//                e.printStackTrace();
+//            }
+//            System.out.println("my json object:"+ jsonobject);
+//            partner_id = jsonobject.optString("PARTNER_ID");
+//            partner_name = jsonobject.optString("PARTNER_NAME");
+//            partner_region = jsonobject.optString("REGION");
+//            partner_state = jsonobject.optString("STATE");
+//            validate_authentic_user = jsonobject.optString("msg");
+//            Log.e("partner_name",partner_name);
+//            Log.e("partner_region",partner_region);
+//            Log.e("validate_authentic_user",validate_authentic_user);
+
+
+
+
+        }
+
+    }
+
+
+
 }

@@ -97,13 +97,7 @@ public class HP_PA_RESPONSEGRAPH extends Activity implements RecognitionListener
     public void onResume() {
         super.onResume();
 
-        System.out.println("response flag value" + Prefs.getBoolean(BYTECH_APP_CONSTANT.shared_response_flag, false));
-        if(Prefs.getBoolean(BYTECH_APP_CONSTANT.shared_response_flag, false))
-        {
-            speakOut("342 LAPTOPS");
-        }
-
-        response_speak_btn.setOnClickListener(new View.OnClickListener() {
+       response_speak_btn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
 
@@ -269,7 +263,13 @@ public class HP_PA_RESPONSEGRAPH extends Activity implements RecognitionListener
                 System.out.println("languge status if"+result);
                 Log.e("TTS", "Language is not supported");
             } else {
-                speakOut("");
+                System.out.println("response flag value" + Prefs.getBoolean(BYTECH_APP_CONSTANT.shared_response_flag, false));
+                if((Prefs.getBoolean(BYTECH_APP_CONSTANT.shared_response_flag, false)))
+                {
+            speakOut("342 LAPTOPS");
+                    Prefs.putBoolean(BYTECH_APP_CONSTANT.shared_response_flag, false);
+                }
+
                 System.out.println("languge status else" + result);
             }
 

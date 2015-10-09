@@ -60,9 +60,6 @@ public class HP_PA_SPLASH extends Activity {
     protected void onResume() {
         super.onResume();
 
-
-
-
     }
 
 
@@ -75,16 +72,12 @@ public class HP_PA_SPLASH extends Activity {
     }
 
 
-
-
     public void hppa_dcl_layout_t3() {
         setContentView(R.layout.hp_pa_splash);
         animatedCircleLoadingView = (AnimatedCircleLoadingView)
                 findViewById(R.id.circle_loading_view);
 
-
     }
-
 
     private void startLoading() {
 

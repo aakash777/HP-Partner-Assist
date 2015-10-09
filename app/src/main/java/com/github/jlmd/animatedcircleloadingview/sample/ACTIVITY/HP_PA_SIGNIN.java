@@ -154,6 +154,7 @@ public class HP_PA_SIGNIN extends Activity {
             try {
                 String SetServerString = "";
                 HttpGet httpget = new HttpGet(URL[0]);
+                System.out.println("my json url" + URL[0]);
                 ResponseHandler<String> responseHandler = new BasicResponseHandler();
                 SetServerString = Client.execute(httpget, responseHandler);
 
@@ -168,14 +169,14 @@ public class HP_PA_SIGNIN extends Activity {
 
             super.onPostExecute(result);
             PD.dismiss();
-
+            System.out.println("my json object:" + result);
             JSONArray myListsAll = null;
             try {
                 myListsAll = new JSONArray(result);
             } catch (JSONException e) {
                 e.printStackTrace();
             }
-
+            System.out.println("json array"+myListsAll);
             JSONObject jsonobject = null;
             try {
                 jsonobject = (JSONObject) myListsAll.get(0);
@@ -211,6 +212,14 @@ public class HP_PA_SIGNIN extends Activity {
 
             }else if((get_prtnrid_edittxt.equals("mj99"))&&(get_password_edittxt.equals("pa124")))
             {
+                Prefs.putString(BYTECH_APP_CONSTANT.shared_partner_id, "m123");
+
+                Prefs.putString(BYTECH_APP_CONSTANT.shared_partner_name, "Mainak Karmakar");
+
+                Prefs.putString(BYTECH_APP_CONSTANT.shared_partner_state, "WEST BENGAL");
+
+                Prefs.putString(BYTECH_APP_CONSTANT.shared_partner_region, "NORTH EAST");
+
                 Intent goToHomePage = new Intent(HP_PA_SIGNIN.this, HP_PA_HOME.class);
                 goToHomePage.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
                 startActivity(goToHomePage);
