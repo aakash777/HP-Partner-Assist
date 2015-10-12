@@ -59,7 +59,8 @@
         android:layout_below="@+id/countdown_timer"
         android:layout_marginTop="60dp"
         android:layout_marginLeft="60dp"
-        android:background="@drawable/mic_brdr"
+        android:background="@drawable/back"
+        android:visibility="gone"
         />
 
     <ImageView
@@ -70,10 +71,12 @@
         android:layout_below="@+id/countdown_timer"
         android:layout_marginTop="60dp"
         android:layout_marginRight="60dp"
-        android:background="@drawable/mic_brdr"
+        android:background="@drawable/forward"
+        android:visibility="gone"
         />
 
     <TextView
+        android:id="@+id/back_txtvw"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_below="@+id/continue_btn_imgvw"
@@ -83,9 +86,11 @@
         android:textSize="18sp"
         android:textColor="#ffffff"
         android:text="Try Another \nQuestion"
+        android:visibility="gone"
         />
 
     <TextView
+        android:id="@+id/continue_txtvw"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_below="@+id/continue_btn_imgvw"
@@ -95,6 +100,7 @@
         android:textSize="18sp"
         android:textColor="#ffffff"
         android:text="Continue \nAnyway"
+        android:visibility="gone"
         />
 
 </RelativeLayout>

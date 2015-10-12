@@ -13,8 +13,9 @@ public class BYTECH_APP_CONSTANT {
     public static String shared_partner_region = "shared_partner_region";
     public static String shared_partner_state = "shared_partner_area";
     public static String shared_response_flag = "response_flag";
-
-
+    public static String shared_result_count = "total_count";
+    public static String shared_speak_flag = "result_speak_flag";
+    public static String shared_action_type = "action_type";
 
 
 }
