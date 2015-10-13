@@ -8,6 +8,7 @@ import android.speech.RecognitionListener;
 import android.speech.RecognizerIntent;
 import android.speech.SpeechRecognizer;
 import android.speech.tts.TextToSpeech;
+import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.View;
 import android.view.animation.Animation;
@@ -35,12 +36,13 @@ public class HP_PA_RESPONSEGRAPH extends Activity implements RecognitionListener
     private Intent recognizerIntent;
     private TextToSpeech tts;
     TextView response_graphvw_txtvw , response_gridvw_txtvw , response_txtvw_txtvw
-            , footer_powered_txt;
+            , footer_powered_txt,construction_txt;
     EditText footer_response_txt;
     RelativeLayout response_header_gridvw_rl,response_header_txtvw_rl ,
             response_header_graphvw_rl;
-    ImageView response_txt_imgvw,response_graph_imgvw,response_grid_imgvw,response_speak_btn;
+    ImageView response_txt_imgvw,response_graph_imgvw,response_grid_imgvw,response_speak_btn,action_home;
     Animation animScale;
+    android.support.v7.widget.Toolbar toolbar;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -62,6 +64,17 @@ public class HP_PA_RESPONSEGRAPH extends Activity implements RecognitionListener
         hppa_dcl_layout();
         //layout reference
         hppa_dcl_layout_variables();
+
+        construction_txt.setVisibility(View.VISIBLE);
+        action_home.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Prefs.putInt(BYTECH_APP_CONSTANT.shared_home_speak_flag, 0);
+                Intent hom_int = new Intent(getApplicationContext(), HP_PA_HOME.class);
+                startActivity(hom_int);
+                finish();
+            }
+        });
         //setting the animation
         animScale = AnimationUtils.loadAnimation(this, R.anim.anim_scale);
         //widget fonts
@@ -91,6 +104,8 @@ public class HP_PA_RESPONSEGRAPH extends Activity implements RecognitionListener
 
             }
         });
+
+
     }//oncreate ends here
 
     @Override
@@ -127,6 +142,8 @@ public class HP_PA_RESPONSEGRAPH extends Activity implements RecognitionListener
     }
     public void hppa_dcl_layout_variables() {
 
+        toolbar = (Toolbar) findViewById(R.id.hppa_tool_bar);
+        action_home = (ImageView) toolbar.findViewById(R.id.action_home);
         response_graphvw_txtvw = (TextView) findViewById(R.id.response_graphvw_txtvw);
         response_gridvw_txtvw = (TextView) findViewById(R.id.response_gridvw_txtvw);
         response_txtvw_txtvw = (TextView) findViewById(R.id.response_txtvw);
@@ -139,6 +156,7 @@ public class HP_PA_RESPONSEGRAPH extends Activity implements RecognitionListener
         response_graph_imgvw = (ImageView) findViewById(R.id.response_graph_imgvw);
         response_grid_imgvw = (ImageView) findViewById(R.id.response_grid_imgvw);
         response_speak_btn = (ImageView) findViewById(R.id.response_speak_btn);
+        construction_txt = (TextView) findViewById(R.id.construction_txt);
     }
 
     public void hppa_set_widget_fonts() {
@@ -149,6 +167,7 @@ public class HP_PA_RESPONSEGRAPH extends Activity implements RecognitionListener
         response_gridvw_txtvw.setTypeface(typeFace);
         response_txtvw_txtvw.setTypeface(typeFace);
         footer_response_txt.setTypeface(typeFace);
+        construction_txt.setTypeface(typeFace);
 
     }
 

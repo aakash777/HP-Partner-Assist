@@ -37,7 +37,7 @@
                 android:textSize="@dimen/response_title_txtsz"
                 android:textColor="@color/responce_compnt_txtclr"
                 android:textAppearance="@style/Base.TextAppearance.AppCompat.Large"
-                android:text="DESKTOPS"
+                android:text=""
                 android:textStyle="bold"
                 />
 

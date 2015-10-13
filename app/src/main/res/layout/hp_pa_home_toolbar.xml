@@ -14,31 +14,25 @@
         android:layout_height="wrap_content"
         >
 
-      <ImageView
-          android:layout_width="wrap_content"
-          android:layout_height="wrap_content"
-          android:layout_centerVertical="true"
-          android:layout_alignParentLeft="true"
-          android:background="@drawable/menu"/>
-
-    <TextView
-        android:id="@+id/toolbar_title_txtvw"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_centerHorizontal="true"
-        android:layout_centerInParent="true"
-        android:text="HOME"
-        android:textColor="@color/app_white"
-        android:textSize="14sp"
-        android:textStyle="bold"/>
-
         <ImageView
-            android:id="@+id/action_home"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_centerVertical="true"
-            android:layout_alignParentRight="true"
-            android:background="@drawable/home"/>
+            android:layout_alignParentLeft="true"
+            android:background="@drawable/menu"/>
+
+        <TextView
+            android:id="@+id/toolbar_title_txtvw"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerHorizontal="true"
+            android:layout_centerInParent="true"
+            android:text="HOME"
+            android:textColor="@color/app_white"
+            android:textSize="14sp"
+            android:textStyle="bold"/>
+
+
 
     </RelativeLayout>
 

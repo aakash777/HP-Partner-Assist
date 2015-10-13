@@ -16,6 +16,7 @@ import android.speech.RecognitionListener;
 import android.speech.RecognizerIntent;
 import android.speech.SpeechRecognizer;
 import android.speech.tts.TextToSpeech;
+import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.Gravity;
 import android.view.View;
@@ -92,19 +93,26 @@ public class HP_PA_HOME extends Activity implements RecognitionListener , TextTo
     Dialog dialog;
     JSONObject businessObject = null;
     String result_obj ="";
+
 //  int speech_listner_flag;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         pre_validated_text = "";
-        globaltext = Prefs.getString(BYTECH_APP_CONSTANT.shared_wishing_time, "")+"\n"+
-                Prefs.getString(BYTECH_APP_CONSTANT.shared_partner_name, "")+"\n"+
-                "welcome to bytech india "+"\n"+"please tab and ask your question";
-        tts = new TextToSpeech(this, this);
+        if(Prefs.getInt(BYTECH_APP_CONSTANT.shared_home_speak_flag,0)==1) {
+            globaltext = Prefs.getString(BYTECH_APP_CONSTANT.shared_wishing_time, "") + "\n" +
+                    Prefs.getString(BYTECH_APP_CONSTANT.shared_partner_name, "") + "\n" +
+                    "welcome to bytech india " + "\n" + "please tab and ask your question";
+            tts = new TextToSpeech(this, this);
+        }else{
+            globaltext = "please tab and ask your question";
+            tts = new TextToSpeech(this, this);
+        }
         System.out.println("speech status onstart" + tts.isSpeaking());
         //layout declaration
         hppa_dcl_layout();
+
         //setting the animation
         animScale = AnimationUtils.loadAnimation(this,R.anim.anim_scale);
         //layout reference
@@ -135,11 +143,13 @@ public class HP_PA_HOME extends Activity implements RecognitionListener , TextTo
     }
     public void hppa_dcl_layout_variables() {
 
+
         home_speech_imgbtn  = (ImageButton) findViewById(R.id.home_speech_imgbtn);
         home_speech_txtvw = (TextView) findViewById(R.id.home_speech_txtvw);
         home_powered_txt = (TextView) findViewById(R.id.footer_powered_txt);
         mProgressBar = (GoogleProgressBar) findViewById(R.id.google_progress);
         footer_marque_txt = (TextView) findViewById(R.id.footer_marque_txt);
+
 
     }
 
@@ -173,7 +183,21 @@ public class HP_PA_HOME extends Activity implements RecognitionListener , TextTo
             @Override
             public void onClick(View view) {
 
-
+//                //check the internet connection
+//                isInternetPresent = cd.isConnectingToInternet();
+//                // check for Internet status
+//                if (isInternetPresent) {
+//                    pre_validated_text = "How many Laptop purchase Yesterday";
+//                    pre_validated_text_replaceSpace = pre_validated_text.replaceAll(" ", "%20");
+//                    System.out.println("pre executed url"+URL+pre_validated_text_replaceSpace);
+//                    new GetParameterFromAPIAI().execute(URL + pre_validated_text_replaceSpace);
+//                } else {
+//
+//                    // Internet connection is not present
+//                    // Ask user to connect to Internet
+//                    speakOut("please check your internet connection" + "\n" + "then try to proceed");
+//
+//                }
 
             }
         });
@@ -229,10 +253,10 @@ public class HP_PA_HOME extends Activity implements RecognitionListener , TextTo
     protected void onStop()
     {
         super.onStop();
-//        tts.stop();
-//        if(tts != null){
-//            tts.shutdown();
-//        }
+        tts.stop();
+        if(tts != null){
+            tts.shutdown();
+        }
     }
 
     @Override
@@ -666,6 +690,7 @@ public class HP_PA_HOME extends Activity implements RecognitionListener , TextTo
             try {
                 product = businessObject.getString("Product");
                 System.out.println(product);
+                Prefs.putString(BYTECH_APP_CONSTANT.shared_product_name,product);
                 event = businessObject.getString("Event");
                 System.out.println(event);
                 date = businessObject.getString("date");

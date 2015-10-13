@@ -27,7 +27,21 @@
         <RelativeLayout
             android:layout_width="match_parent"
             android:layout_height="0dp"
-            android:layout_weight="70">
+            android:layout_weight="70"
+            >
+
+            <TextView
+                android:id="@+id/construction_txt"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_centerInParent="true"
+                android:textStyle="bold"
+                android:textColor="@color/home_grey_txtclr"
+                android:textSize="20sp"
+                android:text="I am Under Construction"
+                android:visibility="gone"
+                />
+
         </RelativeLayout>
 
 

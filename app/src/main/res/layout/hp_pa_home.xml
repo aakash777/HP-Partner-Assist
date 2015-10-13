@@ -14,7 +14,7 @@
         android:visibility="visible">
 
         <include
-        layout="@layout/hp_pa_toolbar"
+        layout="@layout/hp_pa_home_toolbar"
         android:layout_width="match_parent"
         android:layout_height="0dp"
         android:layout_weight="10"></include>

@@ -219,7 +219,7 @@ public class HP_PA_SIGNIN extends Activity {
                 Prefs.putString(BYTECH_APP_CONSTANT.shared_partner_state, "WEST BENGAL");
 
                 Prefs.putString(BYTECH_APP_CONSTANT.shared_partner_region, "NORTH EAST");
-
+                Prefs.putInt(BYTECH_APP_CONSTANT.shared_home_speak_flag, 1);
                 Intent goToHomePage = new Intent(HP_PA_SIGNIN.this, HP_PA_HOME.class);
                 goToHomePage.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
                 startActivity(goToHomePage);

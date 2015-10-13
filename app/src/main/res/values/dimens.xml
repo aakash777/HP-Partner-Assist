@@ -34,12 +34,12 @@
   <dimen name="home_speech_textsize">24sp</dimen>
 
   <!-- Response Page-->
-  <dimen name="response_header_all_mrgn">10dp</dimen>
+  <dimen name="response_header_all_mrgn">8dp</dimen>
   <dimen name="response_txtvw_mrgn">20dp</dimen>
   <dimen name="response_header_rl_mrgn">2dp</dimen>
   <dimen name="response_edtxt_mrgn_rt">10dp</dimen>
   <dimen name="response_edtxt_mrgn_lft">20dp</dimen>
-  <dimen name="response_imgvw_width">28dp</dimen>
+  <dimen name="response_imgvw_width">25dp</dimen>
   <dimen name="response_header_txtsz">12sp</dimen>
   <dimen name="response_title_txtsz">34sp</dimen>
   <dimen name="response_count_txtsz">38sp</dimen>

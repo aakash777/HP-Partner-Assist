@@ -13,6 +13,7 @@ import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
+import android.support.v7.widget.Toolbar;
 
 import com.app.jlmd.animatedcircleloadingview.sample.R;
 import com.github.jlmd.animatedcircleloadingview.sample.ACTIVITY.APP_UTILS.BYTECH_APP_CONSTANT;
@@ -25,12 +26,14 @@ import java.util.Locale;
 public class HP_PA_RESPONSETEXT extends Activity implements TextToSpeech.OnInitListener{
 
     Typeface typeFace;
-    TextView response_graphvw_txtvw , response_gridvw_txtvw , response_txtvw_txtvw,responsetxt_cmpnntcount_txtvw;
+    TextView response_graphvw_txtvw , response_gridvw_txtvw , response_txtvw_txtvw,responsetxt_cmpnntcount_txtvw,
+            responsetxt_cmpnnt_txtvw;
     EditText footer_response_txt;
     RelativeLayout response_header_txtvw_rl,response_header_gridvw_rl,response_header_graphvw_rl;
-    ImageView response_txt_imgvw,response_graph_imgvw,response_grid_imgvw,response_speak_btn;
+    ImageView response_txt_imgvw,response_graph_imgvw,response_grid_imgvw,response_speak_btn , action_home;
     Animation animScale;
     String globaltext;
+    android.support.v7.widget.Toolbar toolbar;
 
     private TextToSpeech tts2;
 
@@ -39,17 +42,41 @@ public class HP_PA_RESPONSETEXT extends Activity implements TextToSpeech.OnInitL
         super.onCreate(savedInstanceState);
         if(Prefs.getInt(BYTECH_APP_CONSTANT.shared_speak_flag,0)==1) {
 
-            globaltext = "Dear" + "\n" + Prefs.getString(BYTECH_APP_CONSTANT.shared_partner_name, "") + "\n" +
-                    "You Have" + "\n" + Prefs.getString(BYTECH_APP_CONSTANT.shared_result_count, "") + "\n" +
-                    Prefs.getString(BYTECH_APP_CONSTANT.shared_action_type, "")+"you can't get purchase details for the current week";
+            if(Prefs.getString(BYTECH_APP_CONSTANT.shared_result_count, "").equals("0"))
+            {
+                globaltext = "Dear" + "\n" + Prefs.getString(BYTECH_APP_CONSTANT.shared_partner_name, "") + "\n" +
+                        "You will not get any purchase details for the current week";
 
-            tts2 = new TextToSpeech(this, this);
-            Prefs.putInt(BYTECH_APP_CONSTANT.shared_speak_flag, 0);
+                tts2 = new TextToSpeech(this, this);
+                Prefs.putInt(BYTECH_APP_CONSTANT.shared_speak_flag, 0);
+            }
+            else{
+                globaltext = "Dear" + "\n" + Prefs.getString(BYTECH_APP_CONSTANT.shared_partner_name, "") + "\n" +
+                        "You Have" + "\n" + Prefs.getString(BYTECH_APP_CONSTANT.shared_result_count, "") +"\n"+
+                        Prefs.getString(BYTECH_APP_CONSTANT.shared_product_name,"")+ "\n" +
+                        Prefs.getString(BYTECH_APP_CONSTANT.shared_action_type, "");
+
+                tts2 = new TextToSpeech(this, this);
+                Prefs.putInt(BYTECH_APP_CONSTANT.shared_speak_flag, 0);
+            }
+
         }
         //layout declaration
         hppa_dcl_layout();
         //layout reference
         hppa_dcl_layout_variables();
+
+        action_home.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Prefs.putInt(BYTECH_APP_CONSTANT.shared_home_speak_flag, 0);
+                Intent hom_int = new Intent(getApplicationContext(), HP_PA_HOME.class);
+                startActivity(hom_int);
+                finish();
+            }
+        });
+        responsetxt_cmpnnt_txtvw.setText(Prefs.getString(BYTECH_APP_CONSTANT.shared_product_name, ""));
+
         //setting the animation
         animScale = AnimationUtils.loadAnimation(this, R.anim.anim_scale);
         //widget fonts
@@ -105,13 +132,15 @@ public class HP_PA_RESPONSETEXT extends Activity implements TextToSpeech.OnInitL
     }
     public void hppa_dcl_layout_variables() {
 
+        toolbar = (Toolbar) findViewById(R.id.hppa_tool_bar);
+        action_home = (ImageView) toolbar.findViewById(R.id.action_home);
         response_graphvw_txtvw = (TextView) findViewById(R.id.response_graphvw_txtvw);
         response_gridvw_txtvw = (TextView) findViewById(R.id.response_gridvw_txtvw);
         response_txtvw_txtvw = (TextView) findViewById(R.id.response_txtvw);
         responsetxt_cmpnntcount_txtvw = (TextView) findViewById(R.id.responsetxt_cmpnntcount_txtvw);
 
         footer_response_txt = (EditText) findViewById(R.id.response_command_txtvw);
-//        footer_powered_txt = (TextView) findViewById(R.id.footer_powered_txt);
+//      footer_powered_txt = (TextView) findViewById(R.id.footer_powered_txt);
         response_header_txtvw_rl = (RelativeLayout) findViewById(R.id.response_header_txtvw_rl);
         response_header_gridvw_rl = (RelativeLayout) findViewById(R.id.response_header_gridvw_rl);
         response_header_graphvw_rl = (RelativeLayout) findViewById(R.id.response_header_graphvw_rl);
@@ -119,6 +148,8 @@ public class HP_PA_RESPONSETEXT extends Activity implements TextToSpeech.OnInitL
         response_graph_imgvw = (ImageView) findViewById(R.id.response_graph_imgvw);
         response_grid_imgvw = (ImageView) findViewById(R.id.response_grid_imgvw);
         response_speak_btn = (ImageView) findViewById(R.id.response_speak_btn);
+        responsetxt_cmpnnt_txtvw = (TextView) findViewById(R.id.responsetxt_cmpnnt_txtvw);
+
     }
 
     public void hppa_set_widget_fonts() {
