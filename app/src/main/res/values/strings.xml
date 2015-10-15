@@ -11,6 +11,10 @@
   <string name="signin_foter_txt">Powered by Bytech</string>
   ---------------------------------------------------------------
   <string name="home_speech_txt">Tab the button to speak</string>
+  <string name="home_speech_cmd">To Start speaking say "Hello PA"</string>
+  <string name="menu_caption">Say "close" to close PA "proceed" or "go" to process your question, "Cancel" to ask another</string>
+  <string name="digits_caption">Please Speak your question</string>
+
   ---------------------------------------------------------------
   <string name="response_graphvw_txt">GRAPH VIEW</string>
   <string name="response_gridvw_txt">GRID VIEW</string>

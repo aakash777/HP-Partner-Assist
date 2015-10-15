@@ -120,7 +120,7 @@ public class HP_PA_SPLASH extends Activity {
                     }
                     else{
                         Prefs.putInt(BYTECH_APP_CONSTANT.shared_home_speak_flag,1);
-                        Intent splshint = new Intent(HP_PA_SPLASH.this, HP_PA_HOME.class);
+                        Intent splshint = new Intent(HP_PA_SPLASH.this, POCKET_SPHINX_HOME.class);
                         startActivity(splshint);
                         finish();
                     }

@@ -37,9 +37,14 @@ dependencies {
     compile fileTree(include: ['*.jar'], dir: 'libs')
     compile 'com.android.support:appcompat-v7:22.2.0'
     compile project(':library')
+    compile files('libs/acattsandroid-sdk-library.jar')
     compile 'com.mcxiaoke.volley:library:1.0.19'
     compile 'com.pixplicity.easyprefs:library:1.7'
     compile 'com.jpardogo.googleprogressbar:library:1.2.0'
     compile 'com.github.rahatarmanahmed:circularprogressview:2.4.0'
     compile 'net.simonvt.menudrawer:menudrawer:3.0.6'
 }
+
+ant.importBuild 'assets.xml'
+preBuild.dependsOn(list, checksum)
+clean.dependsOn(clean_assets)
