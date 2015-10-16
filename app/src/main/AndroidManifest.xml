@@ -7,6 +7,9 @@
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
     <uses-permission android:name="android.permission.NETWORK" />
     <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
+    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
+    <uses-permission android:name="android.permission.MODIFY_AUDIO_SETTINGS" />
+    <uses-permission android:name="android.permission.WAKE_LOCK" />
 
     <application
         android:name="com.github.jlmd.animatedcircleloadingview.sample.ACTIVITY.MAIN_APPLICATION.BYTECH_SINGLETON"
@@ -49,8 +52,16 @@
             android:label="@string/app_name"></activity>
 
         <activity
-            android:name="com.github.jlmd.animatedcircleloadingview.sample.ACTIVITY.POCKET_SPHINX_HOME"
+            android:name="com.github.jlmd.animatedcircleloadingview.sample.ACTIVITY.ISPEECH_TTS"
             android:label="@string/app_name"></activity>
+
+        <meta-data
+            android:name="ispeech_api_key"
+            android:value="b301d71f7e8e7a369fb25fbd3f470cf1" />
+
+        <meta-data
+            android:name="debug"
+            android:value="false" />
 
     </application>
 

@@ -2,11 +2,14 @@ package com.github.jlmd.animatedcircleloadingview.sample.ACTIVITY;
 
 
 import android.app.Activity;
+import android.app.AlertDialog;
 import android.app.Dialog;
 import android.app.ProgressDialog;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Typeface;
+import android.media.AudioManager;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.CountDownTimer;
@@ -46,17 +49,21 @@ import org.apache.http.client.ResponseHandler;
 import org.apache.http.client.methods.HttpGet;
 import org.apache.http.impl.client.BasicResponseHandler;
 import org.apache.http.impl.client.DefaultHttpClient;
+import org.ispeech.SpeechSynthesis;
+import org.ispeech.SpeechSynthesisEvent;
+import org.ispeech.error.BusyException;
+import org.ispeech.error.InvalidApiKeyException;
+import org.ispeech.error.NoNetworkException;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
-
 import java.util.ArrayList;
 import java.util.Locale;
 
 /**
  * Created by Mainak Karmakar on 15/09/2015.
  */
-public class HP_PA_HOME extends Activity implements RecognitionListener , TextToSpeech.OnInitListener
+public class HP_PA_HOME extends Activity implements RecognitionListener
 {
 
     ImageButton home_speech_imgbtn;
@@ -64,7 +71,7 @@ public class HP_PA_HOME extends Activity implements RecognitionListener , TextTo
     ImageView continue_btn_imgvw,back_btn_imgvw;
     //    ImageView timer_speak_btn;
     Typeface typeFace;
-    private SpeechRecognizer speech = null;
+    private SpeechRecognizer speech;
     private Intent recognizerIntent;
     private String LOG_TAG = "HP_PA_HOME";
     //  private AnimatedCircleLoadingView animatedCircleLoadingView;
@@ -93,23 +100,40 @@ public class HP_PA_HOME extends Activity implements RecognitionListener , TextTo
     Dialog dialog;
     JSONObject businessObject = null;
     String result_obj ="";
+    private static final String TAG = "iSpeech SDK Sample";
+    SpeechSynthesis synthesis;
+    Context _context;
 
 //  int speech_listner_flag;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
+//        prepareTTSEngine();
+//        synthesis.setStreamType(AudioManager.STREAM_MUSIC);
+
         pre_validated_text = "";
         if(Prefs.getInt(BYTECH_APP_CONSTANT.shared_home_speak_flag,0)==1) {
             globaltext = Prefs.getString(BYTECH_APP_CONSTANT.shared_wishing_time, "") + "\n" +
                     Prefs.getString(BYTECH_APP_CONSTANT.shared_partner_name, "") + "\n" +
                     "welcome to bytech india " + "\n" + "please tab and ask your question";
-            tts = new TextToSpeech(this, this);
+
+ //           tts = new TextToSpeech(this, this);
         }else{
             globaltext = "please tab and ask your question";
-            tts = new TextToSpeech(this, this);
+            try {
+                synthesis.speak(globaltext);
+            } catch (BusyException e) {
+                Log.e(TAG, "SDK is busy");
+                e.printStackTrace();
+            } catch (NoNetworkException e) {
+                Log.e(TAG, "Network is not available\n" + e.getStackTrace());
+                Toast.makeText(_context, "ERROR: Network is not available", Toast.LENGTH_LONG).show();
+            }
+           // tts = new TextToSpeech(this, this);
         }
-        System.out.println("speech status onstart" + tts.isSpeaking());
+//        System.out.println("speech status onstart" + tts.isSpeaking());
         //layout declaration
         hppa_dcl_layout();
 
@@ -131,16 +155,64 @@ public class HP_PA_HOME extends Activity implements RecognitionListener , TextTo
         recognizerIntent.putExtra(RecognizerIntent.EXTRA_CALLING_PACKAGE,
                 this.getPackageName());
         recognizerIntent.putExtra(RecognizerIntent.EXTRA_LANGUAGE_MODEL,
-                RecognizerIntent.LANGUAGE_MODEL_WEB_SEARCH);
+                RecognizerIntent.LANGUAGE_MODEL_FREE_FORM);
         recognizerIntent.putExtra(RecognizerIntent.EXTRA_MAX_RESULTS, 3);
+        recognizerIntent.putExtra(RecognizerIntent.EXTRA_PARTIAL_RESULTS, true);
 
     }//oncreate ends here
 
-    public void hppa_dcl_layout() {
+    private void prepareTTSEngine() {
+        try {
 
-        setContentView(R.layout.hp_pa_home);
+            synthesis = SpeechSynthesis.getInstance(this);
+            synthesis.setSpeechSynthesisEvent(new SpeechSynthesisEvent() {
+
+                public void onPlaySuccessful() {
+                    Log.i(TAG, "onPlaySuccessful");
+                }
+
+                public void onPlayStopped() {
+                    Log.i(TAG, "onPlayStopped");
+                }
+
+                public void onPlayFailed(Exception e) {
+                    Log.e(TAG, "onPlayFailed");
+
+                    AlertDialog.Builder builder = new AlertDialog.Builder(HP_PA_HOME.this);
+                    builder.setMessage("Error[TTSActivity]: " + e.toString())
+                            .setCancelable(false)
+                            .setPositiveButton("OK", new DialogInterface.OnClickListener() {
+                                public void onClick(DialogInterface dialog, int id) {
+
+                                }
+                            });
+                    AlertDialog alert = builder.create();
+                    alert.show();
+                }
+
+                public void onPlayStart() {
+                    Log.i(TAG, "onPlayStart");
+                }
+
+                @Override
+                public void onPlayCanceled() {
+                    Log.i(TAG, "onPlayCanceled");
+                }
+
+
+            });
+
+        } catch (InvalidApiKeyException e) {
+            Log.e(TAG, "Invalid API key\n" + e.getStackTrace());
+            Toast.makeText(_context, "ERROR: Invalid API key", Toast.LENGTH_LONG).show();
+        }
 
     }
+
+    public void hppa_dcl_layout() {
+        setContentView(R.layout.hp_pa_home);
+    }
+
     public void hppa_dcl_layout_variables() {
 
 
@@ -166,7 +238,19 @@ public class HP_PA_HOME extends Activity implements RecognitionListener , TextTo
     public void onResume() {
         super.onResume();
 
-        System.out.println("speech status onresume" + tts.isSpeaking());
+        prepareTTSEngine();
+        synthesis.setStreamType(AudioManager.STREAM_MUSIC);
+
+        try {
+            synthesis.speak(globaltext);
+        } catch (BusyException e) {
+            Log.e(TAG, "SDK is busy");
+            e.printStackTrace();
+        } catch (NoNetworkException e) {
+            Log.e(TAG, "Network is not available\n" + e.getStackTrace());
+            Toast.makeText(_context, "ERROR: Network is not available", Toast.LENGTH_LONG).show();
+        }
+ //       System.out.println("speech status onresume" + tts.isSpeaking());
         home_speech_imgbtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -202,7 +286,11 @@ public class HP_PA_HOME extends Activity implements RecognitionListener , TextTo
             }
         });
     }
-
+    @Override
+    public void onBackPressed() {
+        synthesis.stop();;
+        return;
+    }
     public class MyCountDownTimer extends CountDownTimer {
 
         public MyCountDownTimer(long startTime, long interval) {
@@ -211,9 +299,21 @@ public class HP_PA_HOME extends Activity implements RecognitionListener , TextTo
 
         @Override
         public void onFinish() {
-            speakOut("Dear " + "\n" + Prefs.getString(BYTECH_APP_CONSTANT.shared_partner_name, "")
-                    + "\n" + " your query is taking longer then the usual." + "\n" + "If you Still Wish " +
-                    "to wait please say continue " + "\n" + "otherwise say Cancel to Try with new Question.");
+
+            try {
+                synthesis.speak("Dear " + "\n" + Prefs.getString(BYTECH_APP_CONSTANT.shared_partner_name, "")
+                        + "\n" + " your query is taking longer then the usual." + "\n" + "If you Still Wish " +
+                        "to wait please say continue " + "\n" + "otherwise say Cancel to Try with new Question.");
+            } catch (BusyException e) {
+                Log.e(TAG, "SDK is busy");
+                e.printStackTrace();
+            } catch (NoNetworkException e) {
+                Log.e(TAG, "Network is not available\n" + e.getStackTrace());
+                Toast.makeText(_context, "ERROR: Network is not available", Toast.LENGTH_LONG).show();
+            }
+//            speakOut("Dear " + "\n" + Prefs.getString(BYTECH_APP_CONSTANT.shared_partner_name, "")
+//                    + "\n" + " your query is taking longer then the usual." + "\n" + "If you Still Wish " +
+//                    "to wait please say continue " + "\n" + "otherwise say Cancel to Try with new Question.");
             continue_btn_imgvw.setVisibility(View.VISIBLE);
             back_btn_imgvw.setVisibility(View.VISIBLE);
             continue_txtvw.setVisibility(View.VISIBLE);
@@ -233,9 +333,7 @@ public class HP_PA_HOME extends Activity implements RecognitionListener , TextTo
 
         @Override
         public void onTick(long millisUntilFinished) {
-
             timer_txtvw.setText("" + millisUntilFinished / 1000);
-
         }
     }
 
@@ -247,16 +345,13 @@ public class HP_PA_HOME extends Activity implements RecognitionListener , TextTo
             speech.destroy();
             Log.i(LOG_TAG, "destroy");
         }
+        synthesis.stop();	//Optional to stop the playback when the activity is paused
     }
 
     @Override
     protected void onStop()
     {
         super.onStop();
-        tts.stop();
-        if(tts != null){
-            tts.shutdown();
-        }
     }
 
     @Override
@@ -285,13 +380,20 @@ public class HP_PA_HOME extends Activity implements RecognitionListener , TextTo
         Log.d(LOG_TAG, "FAILED " + errorMessage);
 
         home_speech_txtvw.setText(errorMessage);
-        speakOut(errorMessage + " please tab and speak again");
+        try {
+            synthesis.speak(errorMessage + " please tab and speak again");
+        } catch (BusyException e) {
+            Log.e(TAG, "SDK is busy");
+            e.printStackTrace();
+        } catch (NoNetworkException e) {
+            Log.e(TAG, "Network is not available\n" + e.getStackTrace());
+            Toast.makeText(_context, "ERROR: Network is not available", Toast.LENGTH_LONG).show();
+        }
+//        speakOut(errorMessage + " please tab and speak again");
 //        pre_validated_text="";
         //toggleButton.setChecked(false);
         home_speech_imgbtn.setClickable(true);
         mProgressBar.setVisibility(View.GONE);
-
-
 
     }
 
@@ -351,13 +453,15 @@ public class HP_PA_HOME extends Activity implements RecognitionListener , TextTo
                 message = "Insufficient permissions";
                 break;
             case SpeechRecognizer.ERROR_NETWORK:
-                message = "Network error";
+                //Network error
+                message = "Sorry Network error";
                 break;
             case SpeechRecognizer.ERROR_NETWORK_TIMEOUT:
                 message = "Network timeout";
                 break;
             case SpeechRecognizer.ERROR_NO_MATCH:
-                message = "No match";
+                //no match
+                message = "Sorry we didn't get you";
                 break;
             case SpeechRecognizer.ERROR_RECOGNIZER_BUSY:
                 message = "RecognitionService busy";
@@ -375,41 +479,41 @@ public class HP_PA_HOME extends Activity implements RecognitionListener , TextTo
         return message;
     }
 
-    @Override
-    public void onInit(int status) {
-
-        System.out.println("Enterd init Function");
-        System.out.println("tts init status out"+status);
-        if (status == TextToSpeech.SUCCESS) {
-
-            int result = tts.setLanguage(Locale.ENGLISH);
-            tts.setSpeechRate((float) 1.3);
-            System.out.println("tts init status if" + status);
-            tts.setPitch((float) 1.225); // set pitch level
-
-            // tts.setSpeechRate(2); // set speech speed rate
-            System.out.println("languge status out"+result);
-            if (result == TextToSpeech.LANG_MISSING_DATA
-                    || result == TextToSpeech.LANG_NOT_SUPPORTED) {
-                System.out.println("languge status if"+result);
-                Log.e("TTS", "Language is not supported");
-            } else {
-                speakOut(globaltext);
-                System.out.println("languge status else" + result);
-            }
-
-        } else {
-            Log.e("TTS", "Initilization Failed");
-            System.out.println("tts init status else" + status);
-        }
-
-    }
-
-    private void speakOut(String text) {
-        System.out.println("Entered Speakout");
-        System.out.println("Speakout text"+text);
-        tts.speak(text, TextToSpeech.QUEUE_FLUSH, null);
-    }
+//    @Override
+//    public void onInit(int status) {
+//
+//        System.out.println("Enterd init Function");
+//        System.out.println("tts init status out"+status);
+//        if (status == TextToSpeech.SUCCESS) {
+//
+//            int result = tts.setLanguage(Locale.ENGLISH);
+//            tts.setSpeechRate((float) 1.3);
+//            System.out.println("tts init status if" + status);
+//            tts.setPitch((float) 1.225); // set pitch level
+//
+//            // tts.setSpeechRate(2); // set speech speed rate
+//            System.out.println("languge status out"+result);
+//            if (result == TextToSpeech.LANG_MISSING_DATA
+//                    || result == TextToSpeech.LANG_NOT_SUPPORTED) {
+//                System.out.println("languge status if"+result);
+//                Log.e("TTS", "Language is not supported");
+//            } else {
+//                speakOut(globaltext);
+//                System.out.println("languge status else" + result);
+//            }
+//
+//        } else {
+//            Log.e("TTS", "Initilization Failed");
+//            System.out.println("tts init status else" + status);
+//        }
+//
+//    }
+//
+//    private void speakOut(String text) {
+//        System.out.println("Entered Speakout");
+//        System.out.println("Speakout text"+text);
+//        tts.speak(text, TextToSpeech.QUEUE_FLUSH, null);
+//    }
 
     private void prevalidating_sentence(String sentence)
     {
@@ -425,7 +529,16 @@ public class HP_PA_HOME extends Activity implements RecognitionListener , TextTo
             System.out.println("validated text"+pre_validated_text);
             if(!pre_validated_text.equals(""))
             {
-                speakOut("please wait!! while we process your question");
+//                speakOut("please wait!! while we process your question");
+                try {
+                    synthesis.speak("please wait!! while we process your question");
+                } catch (BusyException e) {
+                    Log.e(TAG, "SDK is busy");
+                    e.printStackTrace();
+                } catch (NoNetworkException e) {
+                    Log.e(TAG, "Network is not available\n" + e.getStackTrace());
+                    Toast.makeText(_context, "ERROR: Network is not available", Toast.LENGTH_LONG).show();
+                }
                 footer_marque_txt.setText("");
                 //check the internet connection
                 isInternetPresent = cd.isConnectingToInternet();
@@ -438,15 +551,34 @@ public class HP_PA_HOME extends Activity implements RecognitionListener , TextTo
                 } else {
                     // Internet connection is not present
                     // Ask user to connect to Internet
-                    speakOut("please check your internet connection" + "\n" + "then try to proceed");
-
+//                    speakOut("please check your internet connection" + "\n" + "then try to proceed");
+                    try {
+                        synthesis.speak("please wait! while we process your question");
+                    } catch (BusyException e) {
+                        Log.e(TAG, "SDK is busy");
+                        e.printStackTrace();
+                    } catch (NoNetworkException e) {
+                        Log.e(TAG, "Network is not available\n" + e.getStackTrace());
+                        Toast.makeText(_context, "ERROR: Network is not available", Toast.LENGTH_LONG).show();
+                    }
                 }
 
 
             }else
             {
-                speakOut("Sorry!! we do not have any question to move forward"+
-                        "\n"+"Please Tab and ask your question");
+//                speakOut("Sorry!! we do not have any question to move forward"+
+//                        "\n"+"Please Tab and ask your question");
+                try {
+                    synthesis.speak("Sorry!! we do not have any question to move forward"+
+                            "\n"+"Please Tab and ask your question");
+                } catch (BusyException e) {
+                    Log.e(TAG, "SDK is busy");
+                    e.printStackTrace();
+                } catch (NoNetworkException e) {
+                    Log.e(TAG, "Network is not available\n" + e.getStackTrace());
+                    Toast.makeText(_context, "ERROR: Network is not available", Toast.LENGTH_LONG).show();
+                }
+
             }
 
         }else  if((sentence.equalsIgnoreCase("cancel"))||(sentence.equalsIgnoreCase("cancels"))
@@ -454,14 +586,36 @@ public class HP_PA_HOME extends Activity implements RecognitionListener , TextTo
         {
             if(!pre_validated_text.equals(""))
             {
-                speakOut("your previous question has been cancelled"+
-                        "\n"+"Please Tab and ask your question");
+//                speakOut("your previous question has been cancelled"+
+//                        "\n"+"Please Tab and ask your question");
+
+                try {
+                    synthesis.speak("your previous question has been cancelled"+
+                            "\n"+"Please Tab and ask your question");
+                } catch (BusyException e) {
+                    Log.e(TAG, "SDK is busy");
+                    e.printStackTrace();
+                } catch (NoNetworkException e) {
+                    Log.e(TAG, "Network is not available\n" + e.getStackTrace());
+                    Toast.makeText(_context, "ERROR: Network is not available", Toast.LENGTH_LONG).show();
+                }
+
                 pre_validated_text = "";
                 footer_marque_txt.setText("");
 
             } else {
-                speakOut("there is no previous question to cancel"+
-                        "\n"+"Please Tab and ask your question");
+//                speakOut("there is no previous question to cancel"+
+//                        "\n"+"Please Tab and ask your question");
+                try {
+                    synthesis.speak("your previous question has been cancelled"+
+                            "\n"+"Please Tab and ask your question");
+                } catch (BusyException e) {
+                    Log.e(TAG, "SDK is busy");
+                    e.printStackTrace();
+                } catch (NoNetworkException e) {
+                    Log.e(TAG, "Network is not available\n" + e.getStackTrace());
+                    Toast.makeText(_context, "ERROR: Network is not available", Toast.LENGTH_LONG).show();
+                }
             }
         }
         else {
@@ -471,8 +625,18 @@ public class HP_PA_HOME extends Activity implements RecognitionListener , TextTo
                 for (int i = 0; i < spoken_user_words.length; i++) {
                     System.out.println("word at position " + i + " is " + spoken_user_words[i]);
                     if (spoken_user_words[i].length() > 45) {
-                        speakOut("Sorry !! We found that your Question has one or more invalid " +
-                                "word!!" + "\n" + "Please tab and Try again");
+//                        speakOut("Sorry !! We found that your Question has one or more invalid " +
+//                                "word!!" + "\n" + "Please tab and Try again");
+                        try {
+                            synthesis.speak("Sorry !! We found that your Question has one or more invalid " +
+                                    "word!!" + "\n" + "Please tab and Try again");
+                        } catch (BusyException e) {
+                            Log.e(TAG, "SDK is busy");
+                            e.printStackTrace();
+                        } catch (NoNetworkException e) {
+                            Log.e(TAG, "Network is not available\n" + e.getStackTrace());
+                            Toast.makeText(_context, "ERROR: Network is not available", Toast.LENGTH_LONG).show();
+                        }
                         //  footer_marque_txt.setText("Please tab and speak again");
 
                         break;
@@ -552,42 +716,118 @@ public class HP_PA_HOME extends Activity implements RecognitionListener , TextTo
                         if (non_english_flag == 0) {
                             pre_validated_text = tempresult;
                             footer_marque_txt.setText(tempresult);
-                            speakOut("Do you mean " + "\t" + tempresult + "\n" +
-                                    "Please say go or proceed to process your question"
-                                    + "\n" + "cancel to ask another");
+//                            speakOut("Do you mean " + "\t" + tempresult + "\n" +
+//                                    "Please say go or proceed to process your question"
+//                                    + "\n" + "cancel to ask another");
+                            try {
+                                synthesis.speak("Do you mean " + "\t" + tempresult + "\n" +
+                                        "Please say go or proceed to process your question"
+                                        + "\n" + "cancel to ask another");
+                            } catch (BusyException e) {
+                                Log.e(TAG, "SDK is busy");
+                                e.printStackTrace();
+                            } catch (NoNetworkException e) {
+                                Log.e(TAG, "Network is not available\n" + e.getStackTrace());
+                                Toast.makeText(_context, "ERROR: Network is not available", Toast.LENGTH_LONG).show();
+                            }
+
+
                         } else {
-                            speakOut("it seams you are not speaking english " + "\n" +
-                                    "Please tab and ask a valid question");
+//                            speakOut("it seams you are not speaking english " + "\n" +
+//                                    "Please tab and ask a valid question");
+                            try {
+                                synthesis.speak("it seams you are not speaking english " + "\n" +
+                                        "Please tab and ask a valid question");
+                            } catch (BusyException e) {
+                                Log.e(TAG, "SDK is busy");
+                                e.printStackTrace();
+                            } catch (NoNetworkException e) {
+                                Log.e(TAG, "Network is not available\n" + e.getStackTrace());
+                                Toast.makeText(_context, "ERROR: Network is not available", Toast.LENGTH_LONG).show();
+                            }
                             //   footer_marque_txt.setText("Please tab and speak again");
 
                         }
 
                     } else if (entityflag >= 1) {
 
-                        speakOut("Sorry !! there cannot be more than one Entity " +
-                                "in your Question" + "\n" + "Please tab and speak a valid question");
+//                        speakOut("Sorry !! there cannot be more than one Entity " +
+//                                "in your Question" + "\n" + "Please tab and speak a valid question");
+                        try {
+                            synthesis.speak("Sorry !! there cannot be more than one Entity " +
+                                    "in your Question" + "\n" + "Please tab and speak a valid question");
+                        } catch (BusyException e) {
+                            Log.e(TAG, "SDK is busy");
+                            e.printStackTrace();
+                        } catch (NoNetworkException e) {
+                            Log.e(TAG, "Network is not available\n" + e.getStackTrace());
+                            Toast.makeText(_context, "ERROR: Network is not available", Toast.LENGTH_LONG).show();
+                        }
                         //   footer_marque_txt.setText("Please tab and speak again");
 
                     } else if (entityflag >= 0) {
-                        speakOut("Sorry !! We found no Entity in your Question" + "\n" +
-                                "Please tab and speak a valid question");
+//                        speakOut("Sorry !! We found no Entity in your Question" + "\n" +
+//                                "Please tab and speak a valid question");
+                        try {
+                            synthesis.speak("Sorry !! We found no Entity in your Question" + "\n" +
+                                    "Please tab and speak a valid question");
+                        } catch (BusyException e) {
+                            Log.e(TAG, "SDK is busy");
+                            e.printStackTrace();
+                        } catch (NoNetworkException e) {
+                            Log.e(TAG, "Network is not available\n" + e.getStackTrace());
+                            Toast.makeText(_context, "ERROR: Network is not available", Toast.LENGTH_LONG).show();
+                        }
+
                         //    footer_marque_txt.setText("Please tab and speak again");
 
                     }
                 } else if (wh_qstn_flg > 1) {
-                    speakOut("Sorry !! there cannot be more than one W.H Question" + "\n" +
-                            "Please tab and speak a valid question");
+//                    speakOut("Sorry !! there cannot be more than one W.H Question" + "\n" +
+//                            "Please tab and speak a valid question");
+                    try {
+                        synthesis.speak("Sorry !! there cannot be more than one W.H Question" + "\n" +
+                                "Please tab and speak a valid question");
+                    } catch (BusyException e) {
+                        Log.e(TAG, "SDK is busy");
+                        e.printStackTrace();
+                    } catch (NoNetworkException e) {
+                        Log.e(TAG, "Network is not available\n" + e.getStackTrace());
+                        Toast.makeText(_context, "ERROR: Network is not available", Toast.LENGTH_LONG).show();
+                    }
                     //footer_marque_txt.setText("Please tab and speak again");
 
                 } else if (wh_qstn_flg == 0) {
-                    speakOut("Sorry !! We found no W.H Question" + "\n" +
-                            "Please tab and speak a valid question");
+//                    speakOut("Sorry !! We found no W.H Question" + "\n" +
+//                            "Please tab and speak a valid question");
+                    try {
+                        synthesis.speak("Sorry !! We found no W.H Question" + "\n" +
+                                "Please tab and speak a valid question");
+                    } catch (BusyException e) {
+                        Log.e(TAG, "SDK is busy");
+                        e.printStackTrace();
+                    } catch (NoNetworkException e) {
+                        Log.e(TAG, "Network is not available\n" + e.getStackTrace());
+                        Toast.makeText(_context, "ERROR: Network is not available", Toast.LENGTH_LONG).show();
+                    }
+
                     //  footer_marque_txt.setText("Please tab and speak again");
 
                 }
             } else {
-                speakOut("Sorry !! We found that your Question exceeds the maximum Length!!" + "\n" +
-                        "Please tab and Try again with a new Question");
+//                speakOut("Sorry !! We found that your Question exceeds the maximum Length!!" + "\n" +
+//                        "Please tab and Try again with a new Question");
+                try {
+                    synthesis.speak("Sorry !! We found that your Question exceeds the maximum Length!!" + "\n" +
+                            "Please tab and Try again with a new Question");
+                } catch (BusyException e) {
+                    Log.e(TAG, "SDK is busy");
+                    e.printStackTrace();
+                } catch (NoNetworkException e) {
+                    Log.e(TAG, "Network is not available\n" + e.getStackTrace());
+                    Toast.makeText(_context, "ERROR: Network is not available", Toast.LENGTH_LONG).show();
+                }
+
                 //    footer_marque_txt.setText("Please tab and speak again");
 
             }
@@ -724,7 +964,16 @@ public class HP_PA_HOME extends Activity implements RecognitionListener , TextTo
         }
         else{
             System.out.println("parameter else");
-            speakOut("Your question did not match our query we will get back to you soon");
+//            speakOut("Your question did not match our query we will get back to you soon");
+            try {
+                synthesis.speak("Your question did not match our query we will get back to you soon");
+            } catch (BusyException e) {
+                Log.e(TAG, "SDK is busy");
+                e.printStackTrace();
+            } catch (NoNetworkException e) {
+                Log.e(TAG, "Network is not available\n" + e.getStackTrace());
+                Toast.makeText(_context, "ERROR: Network is not available", Toast.LENGTH_LONG).show();
+            }
             dialog.dismiss();
             countDownTimer.cancel();
         }
@@ -761,8 +1010,16 @@ public class HP_PA_HOME extends Activity implements RecognitionListener , TextTo
             super.onPostExecute(getResult);
             dialog.dismiss();
             System.out.println("inside service onpost");
-            speakOut("      ");
-
+//            speakOut("      ");
+            try {
+                synthesis.speak("     ");
+            } catch (BusyException e) {
+                Log.e(TAG, "SDK is busy");
+                e.printStackTrace();
+            } catch (NoNetworkException e) {
+                Log.e(TAG, "Network is not available\n" + e.getStackTrace());
+                Toast.makeText(_context, "ERROR: Network is not available", Toast.LENGTH_LONG).show();
+            }
             System.out.println("my json object:" + getResult);
             JSONArray myListsAll = null;
 
@@ -776,7 +1033,16 @@ public class HP_PA_HOME extends Activity implements RecognitionListener , TextTo
 
             }
             System.out.println("json array" + myListsAll.length());
-            speakOut("");
+//            speakOut("");
+            try {
+                synthesis.speak("   ");
+            } catch (BusyException e) {
+                Log.e(TAG, "SDK is busy");
+                e.printStackTrace();
+            } catch (NoNetworkException e) {
+                Log.e(TAG, "Network is not available\n" + e.getStackTrace());
+                Toast.makeText(_context, "ERROR: Network is not available", Toast.LENGTH_LONG).show();
+            }
             if(myListsAll.length()!=0) {
                 JSONObject jsonobject = null;
                 try {
@@ -789,7 +1055,16 @@ public class HP_PA_HOME extends Activity implements RecognitionListener , TextTo
                 if (!jsonobject.optString("TOTALPURCHSE").equals("")) {
                     Prefs.putInt(BYTECH_APP_CONSTANT.shared_speak_flag, 1);
                     Prefs.putString(BYTECH_APP_CONSTANT.shared_result_count, jsonobject.optString("TOTALPURCHSE"));
-                    speakOut(" ");
+//                    speakOut(" ");
+                    try {
+                        synthesis.speak("   ");
+                    } catch (BusyException e) {
+                        Log.e(TAG, "SDK is busy");
+                        e.printStackTrace();
+                    } catch (NoNetworkException e) {
+                        Log.e(TAG, "Network is not available\n" + e.getStackTrace());
+                        Toast.makeText(_context, "ERROR: Network is not available", Toast.LENGTH_LONG).show();
+                    }
                     Intent txt_reslt = new Intent(getApplicationContext(), HP_PA_RESPONSETEXT.class);
                     startActivity(txt_reslt);
                     finish();
@@ -799,7 +1074,16 @@ public class HP_PA_HOME extends Activity implements RecognitionListener , TextTo
             }   else {
                 Prefs.putInt(BYTECH_APP_CONSTANT.shared_speak_flag, 1);
                 Prefs.putString(BYTECH_APP_CONSTANT.shared_result_count, "0");
-                speakOut(" ");
+//                speakOut(" ");
+                try {
+                    synthesis.speak("   ");
+                } catch (BusyException e) {
+                    Log.e(TAG, "SDK is busy");
+                    e.printStackTrace();
+                } catch (NoNetworkException e) {
+                    Log.e(TAG, "Network is not available\n" + e.getStackTrace());
+                    Toast.makeText(_context, "ERROR: Network is not available", Toast.LENGTH_LONG).show();
+                }
                 Intent txt_reslt = new Intent(getApplicationContext(), HP_PA_RESPONSETEXT.class);
                 startActivity(txt_reslt);
                 finish();

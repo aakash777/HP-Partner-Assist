@@ -1,6 +1,9 @@
 package com.github.jlmd.animatedcircleloadingview.sample.ACTIVITY;
 
 import android.app.Activity;
+import android.app.AlertDialog;
+import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Typeface;
 import android.os.Bundle;
@@ -45,7 +48,7 @@ public class HP_PA_SIGNIN extends Activity {
     private BYTECH_CONNECTION_DETECTOR cd;
     private Boolean isInternetPresent = false;
     private String partner_id, partner_name, partner_region, partner_state, validate_authentic_user;
-
+    AlertDialog ad;
 
     String URL = "http://www.bytechdemo.com/SecapPA/Service1.svc/CheckAccess?";
 
@@ -83,14 +86,37 @@ public class HP_PA_SIGNIN extends Activity {
                         new GetDataFromServer()
                                 .execute(URL + "PartnerID=" + get_prtnrid_edittxt + "&PWD=" + get_password_edittxt + "");
                     } else {
-                        // Internet connection is not present
-                        // Ask user to connect to Internet
-                        Toast.makeText(HP_PA_SIGNIN.this, "", Toast.LENGTH_LONG).show();
+                        showNetwrokMessage("","You don't have internet connection.", HP_PA_SIGNIN.this ,R.drawable.ic_launcher);
                     }
                 }
             }
         });
 
+    }
+
+    public void showNetwrokMessage(String title, String message, Context context ,int res) {
+        ad = new AlertDialog.Builder(HP_PA_SIGNIN.this)
+                .setIcon(res)
+                .setMessage(message)
+                        .setPositiveButton("Cancel",
+                                new android.content.DialogInterface.OnClickListener() {
+                                    @Override
+                                    public void onClick(DialogInterface dialog,
+                                                        int which) {
+                                        finish();
+                                        // the rest of your stuff
+                                    }
+                        })
+                .setNegativeButton("Go to Setting",
+                        new android.content.DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialog,
+                                                int which) {
+                                dialog.cancel();
+                                startActivity(new Intent(
+                                        android.provider.Settings.ACTION_WIFI_SETTINGS));
+                            }
+                        }).show();
     }
 
     //oncreate ends here
