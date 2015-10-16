@@ -108,6 +108,8 @@ public class HP_PA_HOME extends Activity implements RecognitionListener
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+        prepareTTSEngine();
+        synthesis.setStreamType(AudioManager.STREAM_MUSIC);
         super.onCreate(savedInstanceState);
 
 //        prepareTTSEngine();
@@ -117,8 +119,16 @@ public class HP_PA_HOME extends Activity implements RecognitionListener
         if(Prefs.getInt(BYTECH_APP_CONSTANT.shared_home_speak_flag,0)==1) {
             globaltext = Prefs.getString(BYTECH_APP_CONSTANT.shared_wishing_time, "") + "\n" +
                     Prefs.getString(BYTECH_APP_CONSTANT.shared_partner_name, "") + "\n" +
-                    "welcome to bytech india " + "\n" + "please tab and ask your question";
-
+                    "welcome to By_tech india " + "\n" + "please tab and ask your question";
+            try {
+                synthesis.speak(globaltext);
+            } catch (BusyException e) {
+                Log.e(TAG, "SDK is busy");
+                e.printStackTrace();
+            } catch (NoNetworkException e) {
+                Log.e(TAG, "Network is not available\n" + e.getStackTrace());
+                Toast.makeText(_context, "ERROR: Network is not available", Toast.LENGTH_LONG).show();
+            }
  //           tts = new TextToSpeech(this, this);
         }else{
             globaltext = "please tab and ask your question";
@@ -238,19 +248,7 @@ public class HP_PA_HOME extends Activity implements RecognitionListener
     public void onResume() {
         super.onResume();
 
-        prepareTTSEngine();
-        synthesis.setStreamType(AudioManager.STREAM_MUSIC);
-
-        try {
-            synthesis.speak(globaltext);
-        } catch (BusyException e) {
-            Log.e(TAG, "SDK is busy");
-            e.printStackTrace();
-        } catch (NoNetworkException e) {
-            Log.e(TAG, "Network is not available\n" + e.getStackTrace());
-            Toast.makeText(_context, "ERROR: Network is not available", Toast.LENGTH_LONG).show();
-        }
- //       System.out.println("speech status onresume" + tts.isSpeaking());
+        //       System.out.println("speech status onresume" + tts.isSpeaking());
         home_speech_imgbtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
