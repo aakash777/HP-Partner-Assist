@@ -14,6 +14,7 @@ import android.widget.Toast;
 import com.app.jlmd.animatedcircleloadingview.sample.R;
 import com.github.jlmd.animatedcircleloadingview.AnimatedCircleLoadingView;
 import com.github.jlmd.animatedcircleloadingview.sample.ACTIVITY.APP_UTILS.BYTECH_APP_CONSTANT;
+import com.github.jlmd.animatedcircleloadingview.sample.ACTIVITY.APP_UTILS.ISPEECH_SUPPORT;
 import com.github.jlmd.animatedcircleloadingview.sample.ACTIVITY.MAIN_APPLICATION.BYTECH_CONNECTION_DETECTOR;
 import com.pixplicity.easyprefs.library.Prefs;
 
@@ -24,6 +25,7 @@ public class HP_PA_SPLASH extends Activity {
     private AnimatedCircleLoadingView animatedCircleLoadingView;
     private String current_date, current_time, day_of_week;
     private BYTECH_CONNECTION_DETECTOR cd;
+    private ISPEECH_SUPPORT isp_sprt;
     private Boolean isInternetPresent = false;
     AlertDialog ad;
     @Override
@@ -33,6 +35,7 @@ public class HP_PA_SPLASH extends Activity {
         //layout declaration
         hppa_dcl_layout_t3();
         cd = new BYTECH_CONNECTION_DETECTOR(getApplicationContext());
+        isp_sprt = new ISPEECH_SUPPORT(getApplicationContext());
         //Check TTS Installed or not
         //updated by Aakash
         //   initTts();
@@ -146,6 +149,8 @@ public class HP_PA_SPLASH extends Activity {
                         finish();
                     }
                     else{
+                        isp_sprt.prepareTTSEngine();
+                        isp_sprt.set_stream();
                         Prefs.putInt(BYTECH_APP_CONSTANT.shared_home_speak_flag,1);
                         Intent splshint = new Intent(HP_PA_SPLASH.this, HP_PA_HOME.class);
                         startActivity(splshint);

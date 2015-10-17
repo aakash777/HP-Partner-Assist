@@ -39,6 +39,7 @@ import android.widget.Toast;
 
 import com.app.jlmd.animatedcircleloadingview.sample.R;
 import com.github.jlmd.animatedcircleloadingview.sample.ACTIVITY.APP_UTILS.BYTECH_APP_CONSTANT;
+import com.github.jlmd.animatedcircleloadingview.sample.ACTIVITY.APP_UTILS.ISPEECH_SUPPORT;
 import com.github.jlmd.animatedcircleloadingview.sample.ACTIVITY.MAIN_APPLICATION.BYTECH_CONNECTION_DETECTOR;
 import com.github.rahatarmanahmed.cpv.CircularProgressView;
 import com.jpardogo.android.googleprogressbar.library.GoogleProgressBar;
@@ -103,32 +104,35 @@ public class HP_PA_HOME extends Activity implements RecognitionListener
     private static final String TAG = "iSpeech SDK Sample";
     SpeechSynthesis synthesis;
     Context _context;
+    private ISPEECH_SUPPORT isp_sprt;
 
 //  int speech_listner_flag;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
-        prepareTTSEngine();
-        synthesis.setStreamType(AudioManager.STREAM_MUSIC);
-        super.onCreate(savedInstanceState);
-
 //        prepareTTSEngine();
 //        synthesis.setStreamType(AudioManager.STREAM_MUSIC);
+        super.onCreate(savedInstanceState);
+        isp_sprt = new ISPEECH_SUPPORT(getApplicationContext());
+        prepareTTSEngine();
+        synthesis.setStreamType(AudioManager.STREAM_MUSIC);
 
         pre_validated_text = "";
         if(Prefs.getInt(BYTECH_APP_CONSTANT.shared_home_speak_flag,0)==1) {
             globaltext = Prefs.getString(BYTECH_APP_CONSTANT.shared_wishing_time, "") + "\n" +
                     Prefs.getString(BYTECH_APP_CONSTANT.shared_partner_name, "") + "\n" +
                     "welcome to By_tech india " + "\n" + "please tab and ask your question";
-            try {
-                synthesis.speak(globaltext);
-            } catch (BusyException e) {
-                Log.e(TAG, "SDK is busy");
-                e.printStackTrace();
-            } catch (NoNetworkException e) {
-                Log.e(TAG, "Network is not available\n" + e.getStackTrace());
-                Toast.makeText(_context, "ERROR: Network is not available", Toast.LENGTH_LONG).show();
-            }
+
+            isp_sprt.go_speek(globaltext);
+//            try {
+//                synthesis.speak(globaltext);
+//            } catch (BusyException e) {
+//                Log.e(TAG, "SDK is busy");
+//                e.printStackTrace();
+//            } catch (NoNetworkException e) {
+//                Log.e(TAG, "Network is not available\n" + e.getStackTrace());
+//                Toast.makeText(_context, "ERROR: Network is not available", Toast.LENGTH_LONG).show();
+//            }
  //           tts = new TextToSpeech(this, this);
         }else{
             globaltext = "please tab and ask your question";
