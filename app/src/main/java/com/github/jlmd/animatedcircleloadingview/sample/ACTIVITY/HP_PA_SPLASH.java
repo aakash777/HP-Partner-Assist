@@ -117,7 +117,6 @@ public class HP_PA_SPLASH extends Activity {
         animatedCircleLoadingView.startDeterminate();
     }
 
-
     private void startPercentMockThread() {
         Runnable runnable = new Runnable() {
 
@@ -129,13 +128,8 @@ public class HP_PA_SPLASH extends Activity {
                         Thread.sleep(45);
                         changePercent(i);
                     }
-
                 } catch (InterruptedException e) {
-
-
                     e.printStackTrace();
-
-
                 } finally {
                     try {
                         Thread.sleep(2000);
@@ -149,8 +143,8 @@ public class HP_PA_SPLASH extends Activity {
                         finish();
                     }
                     else{
-                        isp_sprt.prepareTTSEngine();
-                        isp_sprt.set_stream();
+//                        isp_sprt.prepareTTSEngine(HP_PA_SPLASH.this);
+//                        isp_sprt.set_stream();
                         Prefs.putInt(BYTECH_APP_CONSTANT.shared_home_speak_flag,1);
                         Intent splshint = new Intent(HP_PA_SPLASH.this, HP_PA_HOME.class);
                         startActivity(splshint);
@@ -164,9 +158,7 @@ public class HP_PA_SPLASH extends Activity {
 
         new Thread(runnable).start();
 
-
     }
-
 
     private void changePercent(final int percent) {
 

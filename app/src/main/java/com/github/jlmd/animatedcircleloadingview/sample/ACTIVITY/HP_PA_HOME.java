@@ -98,24 +98,39 @@ public class HP_PA_HOME extends Activity implements RecognitionListener
     String serviceURL = "http://www.bytechdemo.com/spa1/Service1.svc/getanswersecap?";
     String product,event,date;
     String result_count;
-    Dialog dialog;
+    Dialog dialog,dialog_wait;
     JSONObject businessObject = null;
     String result_obj ="";
     private static final String TAG = "iSpeech SDK Sample";
     SpeechSynthesis synthesis;
     Context _context;
     private ISPEECH_SUPPORT isp_sprt;
+    private Thread thread;
 
 //  int speech_listner_flag;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
-//        prepareTTSEngine();
-//        synthesis.setStreamType(AudioManager.STREAM_MUSIC);
-        super.onCreate(savedInstanceState);
-        isp_sprt = new ISPEECH_SUPPORT(getApplicationContext());
         prepareTTSEngine();
         synthesis.setStreamType(AudioManager.STREAM_MUSIC);
+        super.onCreate(savedInstanceState);
+     thread=  new Thread(){
+            @Override
+      public void run(){
+      try {
+      synchronized(this){
+      wait(3000);
+         System.out.println("inside loading dialog");
+          dialog_wait = new Dialog(context, android.R.style.Theme_Translucent_NoTitleBar_Fullscreen);
+          dialog_wait.requestWindowFeature(Window.FEATURE_NO_TITLE);
+          dialog_wait.setContentView(R.layout.loading_dialog_page);
+          Window window = dialog_wait.getWindow();
+          WindowManager.LayoutParams wlp = window.getAttributes();
+          wlp.gravity = Gravity.CENTER;
+          wlp.flags &= ~WindowManager.LayoutParams.FLAG_BLUR_BEHIND;
+          window.setAttributes(wlp);
+          dialog_wait.getWindow().setLayout(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT);
+          dialog_wait.show();
 
         pre_validated_text = "";
         if(Prefs.getInt(BYTECH_APP_CONSTANT.shared_home_speak_flag,0)==1) {
@@ -123,17 +138,17 @@ public class HP_PA_HOME extends Activity implements RecognitionListener
                     Prefs.getString(BYTECH_APP_CONSTANT.shared_partner_name, "") + "\n" +
                     "welcome to By_tech india " + "\n" + "please tab and ask your question";
 
-            isp_sprt.go_speek(globaltext);
-//            try {
-//                synthesis.speak(globaltext);
-//            } catch (BusyException e) {
-//                Log.e(TAG, "SDK is busy");
-//                e.printStackTrace();
-//            } catch (NoNetworkException e) {
-//                Log.e(TAG, "Network is not available\n" + e.getStackTrace());
-//                Toast.makeText(_context, "ERROR: Network is not available", Toast.LENGTH_LONG).show();
-//            }
- //           tts = new TextToSpeech(this, this);
+//            isp_sprt.go_speek(globaltext);
+            try {
+                synthesis.speak(globaltext);
+            } catch (BusyException e) {
+                Log.e(TAG, "SDK is busy");
+                e.printStackTrace();
+            } catch (NoNetworkException e) {
+                Log.e(TAG, "Network is not available\n" + e.getStackTrace());
+                Toast.makeText(_context, "ERROR: Network is not available", Toast.LENGTH_LONG).show();
+            }
+//            tts = new TextToSpeech(this, this);
         }else{
             globaltext = "please tab and ask your question";
             try {
@@ -147,10 +162,20 @@ public class HP_PA_HOME extends Activity implements RecognitionListener
             }
            // tts = new TextToSpeech(this, this);
         }
-//        System.out.println("speech status onstart" + tts.isSpeaking());
-        //layout declaration
-        hppa_dcl_layout();
+          //layout declaration
+          hppa_dcl_layout();
 
+//        System.out.println("speech status onstart" + tts.isSpeaking());
+      }
+      }
+      catch(InterruptedException ex){
+      }finally {
+
+      }
+                // TODO
+      }
+     };
+        thread.start();
         //setting the animation
         animScale = AnimationUtils.loadAnimation(this,R.anim.anim_scale);
         //layout reference
@@ -291,6 +316,7 @@ public class HP_PA_HOME extends Activity implements RecognitionListener
     @Override
     public void onBackPressed() {
         synthesis.stop();;
+        finish();
         return;
     }
     public class MyCountDownTimer extends CountDownTimer {
@@ -732,8 +758,6 @@ public class HP_PA_HOME extends Activity implements RecognitionListener
                                 Log.e(TAG, "Network is not available\n" + e.getStackTrace());
                                 Toast.makeText(_context, "ERROR: Network is not available", Toast.LENGTH_LONG).show();
                             }
-
-
                         } else {
 //                            speakOut("it seams you are not speaking english " + "\n" +
 //                                    "Please tab and ask a valid question");

@@ -27,10 +27,10 @@ public class ISPEECH_SUPPORT {
         this._context = context;
     }
 
-    public void prepareTTSEngine() {
+    public void prepareTTSEngine(Activity myclass) {
         try {
 
-            synthesis = SpeechSynthesis.getInstance((_context);
+            synthesis = SpeechSynthesis.getInstance(myclass);
             synthesis.setSpeechSynthesisEvent(new SpeechSynthesisEvent() {
 
                 public void onPlaySuccessful() {
@@ -64,8 +64,6 @@ public class ISPEECH_SUPPORT {
                 public void onPlayCanceled() {
                     Log.i(TAG, "onPlayCanceled");
                 }
-
-
             });
 
         } catch (InvalidApiKeyException e) {
